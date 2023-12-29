@@ -1,0 +1,12 @@
+CREATE TABLE car(
+ id INT NOT NULL AUTO_INCREMENT,
+ plate_id VARCHAR(200) NOT NULL,
+ model VARCHAR(200) NOT NULL,
+ year VARCHAR(100) NOT NULL,
+ status VARCHAR(100) NOT NULL,
+ price_per_day DECIMAL(8,2) NOT NULL,
+ country VARCHAR(200) NOT NULL, 
+ color VARCHAR(100),
+ CONSTRAINT car_pk PRIMARY KEY(id),
+ CONSTRAINT car_unique_plate_id UNIQUE(plate_id)
+);

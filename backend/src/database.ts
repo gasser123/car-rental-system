@@ -1,32 +1,35 @@
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import mysql from "mysql2" ;
+import { Pool } from "mysql2/typings/mysql/lib/Pool";
 
 dotenv.config();
-let DB: Pool;
+let DBPool:Pool;
 
 const {
-  POSTGRES_HOST,
-  POSTGRES_DB,
-  POSTGRES_USER,
-  POSTGRES_PASSWORD,
-  POSTGRES_TEST_DB,
+  MYSQL_HOST,
+  MYSQL_DB,
+  MYSQL_USER,
+  MYSQL_PASSWORD,
+  MYSQL_TEST_DB,
   ENV,
 } = process.env;
 
 if (ENV === "dev") {
-  DB = new Pool({
-    host: POSTGRES_HOST,
-    database: POSTGRES_DB,
-    user: POSTGRES_USER,
-    password: POSTGRES_PASSWORD,
+  DBPool = mysql.createPool({
+    host: MYSQL_HOST,
+    database: MYSQL_DB,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD,
   });
 } else {
-  DB = new Pool({
-    host: POSTGRES_HOST,
-    database: POSTGRES_TEST_DB,
-    user: POSTGRES_USER,
-    password: POSTGRES_PASSWORD,
+  DBPool = mysql.createPool({
+    host: MYSQL_HOST,
+    database: MYSQL_TEST_DB,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD,
   });
 }
+
+const DB = DBPool.promise();
 
 export default DB;
