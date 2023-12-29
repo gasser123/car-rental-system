@@ -3,6 +3,6 @@ CREATE TABLE pickup_location(
  country VARCHAR(200) NOT NULL,  
  city VARCHAR(200) NOT NULL,
  address VARCHAR(250) NOT NULL,
- CONSTRAINT pickup_location_pk PRIMARY KEY(id),
+ PRIMARY KEY(id),
  CONSTRAINT pickup_location_unique UNIQUE(country, city, address)
 );

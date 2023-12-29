@@ -5,7 +5,7 @@ CREATE TABLE admin(
  first_name VARCHAR(200) NOT NULL,
  last_name VARCHAR(200) NOT NULL,
  role VARCHAR(100) NOT NULL DEFAULT 'admin',
-CONSTRAINT admin_pk PRIMARY KEY(id),
-CONSTRAINT admin_unique_email UNIQUE(email)
+ PRIMARY KEY(id),
+ CONSTRAINT admin_unique_email UNIQUE(email)
 
 );
