@@ -12,6 +12,6 @@ PRIMARY KEY(id),
 CONSTRAINT customer_id_fk FOREIGN KEY(customer_id) REFERENCES customer(id),
 CONSTRAINT car_id_fk FOREIGN KEY(car_id) REFERENCES car(id),
 CONSTRAINT pickup_location_id_fk FOREIGN KEY(pickup_location_id) REFERENCES pickup_location(id),
-CONSTRAINT return_location_id_fk FOREIGN KEY(return_location_id) REFERENCES return_location(id)
-
+CONSTRAINT return_location_id_fk FOREIGN KEY(return_location_id) REFERENCES return_location(id),
+CONSTRAINT reservation_unique UNIQUE(car_id, reservation_date)
 );

@@ -1,4 +1,4 @@
-export interface Reservation {
+interface Reservation {
   id?: number;
   customer_id: number;
   car_id: number;
@@ -9,3 +9,4 @@ export interface Reservation {
   return_date: string;
   total_amount: number;
 }
+export default Reservation;

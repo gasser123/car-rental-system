@@ -1,4 +1,4 @@
-export interface Customer {
+interface Customer {
   id?: number;
   driver_license_no: string;
   first_name: string;
@@ -7,3 +7,4 @@ export interface Customer {
   password: string;
   mobile_no: string;
 }
+export default Customer;

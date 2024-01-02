@@ -6,7 +6,8 @@ CREATE TABLE car(
  status VARCHAR(100) NOT NULL,
  price_per_day DECIMAL(8,2) NOT NULL,
  country VARCHAR(200) NOT NULL, 
- color VARCHAR(100),
+ color VARCHAR(100) NOT NULL,
+ image_url TEXT NOT NULL,
  PRIMARY KEY(id),
  CONSTRAINT car_unique_plate_id UNIQUE(plate_id)
 );

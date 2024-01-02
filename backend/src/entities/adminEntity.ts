@@ -1,5 +1,5 @@
-type role = "root_admin" | "admin";
-export interface Admin {
+export type role = "root_admin" | "admin";
+ interface Admin {
   id?: number;
   email: string;
   password: string;
@@ -7,3 +7,4 @@ export interface Admin {
   last_name: string;
   role: role;
 }
+export default Admin;

@@ -1,5 +1,5 @@
 type status = "Available" | "Rented" | "Out of service";
-export interface Car {
+interface Car {
   id?: number;
   plate_id: string;
   model: string;
@@ -8,4 +8,7 @@ export interface Car {
   price_per_day: number;
   country: string;
   color: string;
+  image_url: string;
 }
+
+export default Car;
