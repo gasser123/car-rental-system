@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import { role } from "../entities/adminEntity";
 dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
-type AdminInfo = {
+export type AdminInfo = {
   id?: number;
   email: string;
   first_name: string;
@@ -80,6 +80,22 @@ class AdminStore {
       return result;
     } catch (error) {
       throw new Error(`couldn't get all admins: ${error}`);
+    }
+  }
+
+  async getAdminInfo(id: number, email: string): Promise<AdminInfo | null> {
+    try {
+      const sql =
+        "SELECT id, email, first_name, last_name, role FROM admin WHERE id = ? AND email = ?";
+      const [rows] = await DB.execute(sql, [id, email]);
+      const result = rows as unknown as AdminInfo[];
+      if (result.length === 0) {
+        return null;
+      }
+      const adminInfo = result[0];
+      return adminInfo;
+    } catch (error) {
+      throw new Error(`couldn't get customer info: ${error}`);
     }
   }
 

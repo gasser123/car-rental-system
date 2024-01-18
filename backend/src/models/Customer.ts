@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
-type CustomerInfo = {
+export type CustomerInfo = {
   id?: number;
   driver_license_no: string;
   first_name: string;
@@ -83,7 +83,8 @@ class CustomerStore {
 
   async getAllCustomers(): Promise<CustomerInfo[] | null> {
     try {
-      const sql = "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer";
+      const sql =
+        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer";
       const [rows] = await DB.execute(sql);
       const result = rows as unknown as CustomerInfo[];
       if (result.length === 0) {
@@ -92,6 +93,23 @@ class CustomerStore {
       return result;
     } catch (error) {
       throw new Error(`couldn't get all customers: ${error}`);
+    }
+  }
+  async getCustomerInfo(
+    id: number
+  ): Promise<CustomerInfo | null> {
+    try {
+      const sql =
+        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as unknown as CustomerInfo[];
+      if (result.length === 0) {
+        return null;
+      }
+      const customerInfo = result[0];
+      return customerInfo;
+    } catch (error) {
+      throw new Error(`couldn't get customer info: ${error}`);
     }
   }
 

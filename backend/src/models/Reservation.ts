@@ -53,6 +53,8 @@ class ReservationStore {
       throw new Error(`couldn't get all reservations: ${error}`);
     }
   }
+
+  
 }
 
 export default ReservationStore;
