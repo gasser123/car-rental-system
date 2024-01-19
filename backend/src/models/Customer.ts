@@ -44,7 +44,8 @@ class CustomerStore {
       const customerResult = result[0];
       return customerResult;
     } catch (error) {
-      throw new Error(`couldn't create car: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create car`);
     }
   }
 
@@ -77,7 +78,8 @@ class CustomerStore {
       }
       return null;
     } catch (err) {
-      throw new Error(`Couldn't authenticate  Error: ${err}`);
+      console.error(err);
+      throw new Error(`Couldn't authenticate`);
     }
   }
 
@@ -92,7 +94,8 @@ class CustomerStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all customers: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all customers`);
     }
   }
   async getCustomerInfo(
@@ -109,7 +112,8 @@ class CustomerStore {
       const customerInfo = result[0];
       return customerInfo;
     } catch (error) {
-      throw new Error(`couldn't get customer info: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get customer info`);
     }
   }
 
@@ -128,7 +132,8 @@ class CustomerStore {
         id,
       ]);
     } catch (error) {
-      throw new Error(`couldn't update customer info: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update customer info`);
     }
   }
 
@@ -141,7 +146,8 @@ class CustomerStore {
       );
       await DB.execute(sql, [hash, id]);
     } catch (error) {
-      throw new Error(`couldn't update customer password: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update customer password`);
     }
   }
 
@@ -161,7 +167,8 @@ class CustomerStore {
       );
       return check;
     } catch (error) {
-      throw new Error(`couldn't confirm current password: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't confirm current password`);
     }
   }
 
@@ -186,12 +193,14 @@ class CustomerStore {
 
       return result;
     } catch (error) {
-      throw new Error(`couldn't do an advanced search: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't do an advanced search`);
     }
   }
 
   async emailAlreadyExists(email: string): Promise<boolean> {
-    const sql = "SELECT * FROM customer WHERE email = ?";
+    try {
+      const sql = "SELECT * FROM customer WHERE email = ?";
     const [rows] = await DB.execute(sql, [email]);
     const result = rows as unknown as Customer[];
     if (result.length === 0) {
@@ -199,6 +208,11 @@ class CustomerStore {
     }
 
     return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if email already exists");
+    }
+    
   }
 }
 export default CustomerStore;

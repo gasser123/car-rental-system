@@ -2,17 +2,12 @@ import CustomerStore, { CustomerInfo } from "../models/Customer";
 import Customer from "../entities/customerEntity";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import express, { Request, Response } from "express";
-import {
-  validateCustomerEmail,
-  validateCustomerInputs,
-} from "../middlewares/inputValidation";
-import verifyAuthToken from "../middlewares/jwtValidation";
+import { Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
 dotenv.config();
 const { TOKEN_SECRET } = process.env;
 const store = new CustomerStore();
-const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const customer: Customer = {
       driver_license_no: req.body.driver_license_no,
@@ -36,14 +31,14 @@ const register = async (req: Request, res: Response) => {
       httpOnly: true,
     });
 
-    res.status(200).json({ message: "registered successfully" });
+    res.status(200).json("registered successfully");
   } catch (err) {
     res.status(400);
     res.json(err);
   }
 };
 
-async function login(req: Request, res: Response) {
+export async function login(req: Request, res: Response) {
   try {
     const email = req.body.email as unknown as string;
     const password = req.body.password as unknown as string;
@@ -61,7 +56,7 @@ async function login(req: Request, res: Response) {
         httpOnly: true,
       });
 
-      res.status(200).json({ message: "logged in successfully" });
+      res.status(200).json("logged in successfully");
     } else {
       res.json("invalid email or password");
     }
@@ -71,14 +66,16 @@ async function login(req: Request, res: Response) {
   }
 }
 
-async function logout(req: Request, res: Response) {
+export async function logout(req: Request, res: Response) {
   res.clearCookie("token", {
     secure: false,
     httpOnly: true,
   });
+
+  res.json("logged out successfully");
 }
 
-async function getProfile(req: RequestObject, res: Response) {
+export async function getProfile(req: RequestObject, res: Response) {
   try {
     const customer_id = req.user_id;
 
@@ -100,7 +97,7 @@ async function getProfile(req: RequestObject, res: Response) {
   }
 }
 
-const changePassword = async (req: RequestObject, res: Response) => {
+export const changePassword = async (req: RequestObject, res: Response) => {
   try {
     const customer_id = req.user_id;
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -120,6 +117,8 @@ const changePassword = async (req: RequestObject, res: Response) => {
         customer_id,
         newPassword as unknown as string
       );
+
+      res.json("password changed successfully");
     } else {
       throw new Error("wrong current password");
     }
@@ -129,7 +128,7 @@ const changePassword = async (req: RequestObject, res: Response) => {
   }
 };
 
-async function updateProfile(req: RequestObject, res: Response) {
+export async function updateProfile(req: RequestObject, res: Response) {
   try {
     const customer_id = req.user_id;
     if (!customer_id) {
@@ -141,11 +140,11 @@ async function updateProfile(req: RequestObject, res: Response) {
       last_name,
       email,
       mobile_no,
-      currentPassword,
+      password,
     } = req.body;
     const check = await store.confirmCurrentPassword(
       customer_id,
-      currentPassword as unknown as string
+      password as unknown as string
     );
     if (!check) {
       throw new Error("wrong password");
@@ -160,30 +159,10 @@ async function updateProfile(req: RequestObject, res: Response) {
     };
 
     await store.updateCustomerInfo(customerInfo);
+    res.status(200);
+    res.json("profile updated successfully");
   } catch (error) {
     res.status(500);
     res.json(error);
   }
 }
-
-const customerRoutes = (app: express.Application) => {
-  app.post(
-    "/register",
-    validateCustomerInputs,
-    validateCustomerEmail,
-    register
-  );
-  app.post("/login", login);
-  app.post("/logout", logout);
-  app.get("/profile", verifyAuthToken, getProfile);
-  app.patch("/changepassword", verifyAuthToken, changePassword);
-  app.patch(
-    "/updateprofile",
-    validateCustomerInputs,
-    validateCustomerEmail,
-    verifyAuthToken,
-    updateProfile
-  );
-};
-
-export default customerRoutes;

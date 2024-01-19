@@ -8,7 +8,8 @@ class ReturnLocationStore {
         "INSERT INTO return_location(country, city, address) VALUES(?, ?, ?)";
       await DB.execute(sql, [country, city, address]);
     } catch (error) {
-      throw new Error(`couldn't create return location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create return location`);
     }
   }
 
@@ -22,7 +23,8 @@ class ReturnLocationStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all return locations: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all return locations`);
     }
   }
 
@@ -33,7 +35,8 @@ class ReturnLocationStore {
         "UPDATE return_location SET country = ?, city = ?, address = ? WHERE id = ?";
       await DB.execute(sql, [country, city, address, id]);
     } catch (error) {
-      throw new Error(`couldn't update return location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update return location`);
     }
   }
 
@@ -42,10 +45,25 @@ class ReturnLocationStore {
       const sql = "DELETE FROM return_location WHERE id = ?";
       await DB.execute(sql, [id]);
     } catch (error) {
-      throw new Error(`couldn't delete return location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't delete return location`);
     }
   }
 
+  async getByCountry(country: string): Promise<ReturnLocation[] | null> {
+    try {
+      const sql = "SELECT * FROM return_location WHERE country = ?";
+      const [rows] = await DB.execute(sql, [country]);
+      const result = rows as unknown as ReturnLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get country return locations`);
+    }
+  }
   async searchByCountry(
     country: string,
     value: string
@@ -61,27 +79,32 @@ class ReturnLocationStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get country return locations: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't search country return locations`);
     }
   }
 
-  async advancedSearch(value: string): Promise<ReturnLocation[] | null>{
+  async advancedSearch(value: string): Promise<ReturnLocation[] | null> {
     try {
-        const idValue = parseInt(value);
-        const searchValue = `%${value}%`;
-        const sql =
-          "SELECT * FROM return_location WHERE id = ? OR city LIKE ? OR address LIKE ? OR country LIKE ?";
-        const [rows] = await DB.execute(sql, [idValue, searchValue, searchValue, searchValue]);
-        const result = rows as unknown as ReturnLocation[];
-        if (result.length === 0) {
-          return null;
-        }
-        return result;
-      } catch (error) {
-        throw new Error(`couldn't get do an advanced search on pickup locations: ${error}`);
+      const idValue = parseInt(value);
+      const searchValue = `%${value}%`;
+      const sql =
+        "SELECT * FROM return_location WHERE id = ? OR city LIKE ? OR address LIKE ? OR country LIKE ?";
+      const [rows] = await DB.execute(sql, [
+        idValue,
+        searchValue,
+        searchValue,
+        searchValue,
+      ]);
+      const result = rows as unknown as ReturnLocation[];
+      if (result.length === 0) {
+        return null;
       }
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get do an advanced search on pickup locations`);
+    }
   }
-
-
 }
 export default ReturnLocationStore;

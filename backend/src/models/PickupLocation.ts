@@ -8,7 +8,8 @@ class PickupLocationStore {
         "INSERT INTO pickup_location(country, city, address) VALUES(?, ?, ?)";
       await DB.execute(sql, [country, city, address]);
     } catch (error) {
-      throw new Error(`couldn't create pickup location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create pickup location`);
     }
   }
 
@@ -22,7 +23,8 @@ class PickupLocationStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all pickup locations: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all pickup locations`);
     }
   }
 
@@ -33,7 +35,8 @@ class PickupLocationStore {
         "UPDATE pickup_location SET country = ?, city = ?, address = ? WHERE id = ?";
       await DB.execute(sql, [country, city, address, id]);
     } catch (error) {
-      throw new Error(`couldn't update pickup location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update pickup location`);
     }
   }
 
@@ -42,10 +45,25 @@ class PickupLocationStore {
       const sql = "DELETE FROM pickup_location WHERE id = ?";
       await DB.execute(sql, [id]);
     } catch (error) {
-      throw new Error(`couldn't delete pickup location: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't delete pickup location`);
     }
   }
 
+  async getByCountry(country: string): Promise<PickupLocation[] | null> {
+    try {
+      const sql = "SELECT * FROM pickup_location WHERE country = ?";
+      const [rows] = await DB.execute(sql, [country]);
+      const result = rows as unknown as PickupLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get country pickup locations`);
+    }
+  }
   async searchByCountry(
     country: string,
     value: string
@@ -61,25 +79,34 @@ class PickupLocationStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get country pickup locations: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't search country pickup locations`);
     }
   }
 
-  async advancedSearch(value: string): Promise<PickupLocation[] | null>{
+  async advancedSearch(value: string): Promise<PickupLocation[] | null> {
     try {
-        const idValue = parseInt(value);
-        const searchValue = `%${value}%`;
-        const sql =
-          "SELECT * FROM pickup_location WHERE id = ? OR city LIKE ? OR address LIKE ? OR country LIKE ?";
-        const [rows] = await DB.execute(sql, [idValue, searchValue, searchValue, searchValue]);
-        const result = rows as unknown as PickupLocation[];
-        if (result.length === 0) {
-          return null;
-        }
-        return result;
-      } catch (error) {
-        throw new Error(`couldn't get do an advanced search on pickup locations: ${error}`);
+      const idValue = parseInt(value);
+      const searchValue = `%${value}%`;
+      const sql =
+        "SELECT * FROM pickup_location WHERE id = ? OR city LIKE ? OR address LIKE ? OR country LIKE ?";
+      const [rows] = await DB.execute(sql, [
+        idValue,
+        searchValue,
+        searchValue,
+        searchValue,
+      ]);
+      const result = rows as unknown as PickupLocation[];
+      if (result.length === 0) {
+        return null;
       }
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(
+        `couldn't get do an advanced search on pickup locations`
+      );
+    }
   }
 }
 export default PickupLocationStore;

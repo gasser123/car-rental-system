@@ -35,7 +35,8 @@ class ReservationStore {
       }
       return reservationResult;
     } catch (error) {
-      throw new Error(`couldn't create reservation: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create reservation`);
     }
   }
 
@@ -50,7 +51,8 @@ class ReservationStore {
 
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all reservations: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all reservations`);
     }
   }
 

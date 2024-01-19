@@ -24,7 +24,8 @@ class AdminStore {
       );
       await DB.execute(sql, [email, hash, first_name, last_name, role]);
     } catch (error) {
-      throw new Error(`couldn't create admin: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create admin`);
     }
   }
 
@@ -56,7 +57,8 @@ class AdminStore {
       }
       return null;
     } catch (err) {
-      throw new Error(`Couldn't authenticate  Error: ${err}`);
+      console.error(err);
+      throw new Error(`Couldn't authenticate  Error`);
     }
   }
 
@@ -65,7 +67,8 @@ class AdminStore {
       const sql = "UPDATE admin SET role = 'root_admin' WHERE id = ?";
       await DB.execute(sql, [id]);
     } catch (error) {
-      throw new Error(`couldn't set admin role: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't set admin role`);
     }
   }
 
@@ -79,7 +82,8 @@ class AdminStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all admins: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all admins`);
     }
   }
 
@@ -95,7 +99,8 @@ class AdminStore {
       const adminInfo = result[0];
       return adminInfo;
     } catch (error) {
-      throw new Error(`couldn't get customer info: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get customer info`);
     }
   }
 
@@ -104,7 +109,8 @@ class AdminStore {
       const sql = "DELETE FROM admin WHERE id = ?";
       await DB.execute(sql, [id]);
     } catch (error) {
-      throw new Error(`couldn't delete admin: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't delete admin`);
     }
   }
 }

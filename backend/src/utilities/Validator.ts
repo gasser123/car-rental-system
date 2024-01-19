@@ -1,3 +1,4 @@
+import { isString } from "./typeValidation";
 class Validator {
   email: RegExp;
   password: RegExp;
@@ -17,28 +18,68 @@ class Validator {
     );
   }
 
-  validateName(name: string): boolean {
+  validateName(value: unknown): boolean {
+    if(!value){
+      return false;
+    }
+    const checkType = isString(value);
+    if(!checkType){
+     return false;
+    }
+    const name = value as string;
     if (name.trim() === "") {
       return false;
     } else {
       return true;
     }
   }
-  validateEmail(inputEmail: string): boolean {
+  validateEmail(value: unknown): boolean {
+    if(!value){
+      return false;
+    }
+    const checkType = isString(value);
+    if(!checkType){
+     return false;
+    }
+    const inputEmail = value as string;
     return this.email.test(inputEmail);
   }
-  validatePassword(inputPassword: string): boolean {
-    return this.email.test(inputPassword);
+  validatePassword(value: unknown): boolean {
+    if(!value){
+      return false;
+    }
+    const checkType = isString(value);
+    if(!checkType){
+     return false;
+    }
+    const inputPassword = value as string;
+    return this.password.test(inputPassword);
   }
 
-  validateLicense(license: string): boolean {
+  validateLicense(value: unknown): boolean {
+    if(!value){
+      return false;
+    }
+    const checkType = isString(value);
+    if(!checkType){
+     return false;
+    }
+    const license = value as string;
     if (license.trim() === "") {
       return false;
     } else {
       return true;
     }
   }
-  validateMobileNo(mobile_no: string): boolean {
+  validateMobileNo(value: unknown): boolean {
+    if(!value){
+      return false;
+    }
+    const checkType = isString(value);
+    if(!checkType){
+     return false;
+    }
+    const mobile_no = value as string;
     if (mobile_no.trim() === "") {
       return false;
     } else {

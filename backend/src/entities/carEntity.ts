@@ -1,4 +1,4 @@
-type status = "Available" | "Rented" | "Out of service";
+export type status = "Available" | "Rented" | "Out of service";
 interface Car {
   id?: number;
   plate_id: string;

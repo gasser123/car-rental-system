@@ -1,6 +1,6 @@
 import express from "express";
 import cookieParser from "cookie-parser";
-import customerRoutes from "./controllers/customerController";
+import customerRoutes from "./routes/customerRoutes";
 import dotenv from "dotenv";
 dotenv.config();
 const {SERVER_PORT} = process.env;

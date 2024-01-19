@@ -26,7 +26,8 @@ class CarStore {
         image_url,
       ]);
     } catch (error) {
-      throw new Error(`couldn't create car: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't create car`);
     }
   }
 
@@ -40,7 +41,8 @@ class CarStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get all cars: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get all cars`);
     }
   }
 
@@ -71,7 +73,8 @@ class CarStore {
         id,
       ]);
     } catch (error) {
-      throw new Error(`couldn't update car: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update car`);
     }
   }
 
@@ -85,7 +88,8 @@ class CarStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't search by country: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't search by country`);
     }
   }
 
@@ -100,7 +104,8 @@ class CarStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get country available cars: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get country available cars`);
     }
   }
   async getCountries(): Promise<{ country: string }[] | null> {
@@ -113,7 +118,8 @@ class CarStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't get countries: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't get countries`);
     }
   }
 
@@ -157,7 +163,8 @@ class CarStore {
       }
       return result;
     } catch (error) {
-      throw new Error(`couldn't do a search: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't do a search`);
     }
   }
 
@@ -185,7 +192,8 @@ class CarStore {
 
       return result;
     } catch (error) {
-      throw new Error(`couldn't do an advanced search: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't do an advanced search`);
     }
   }
 
@@ -203,7 +211,8 @@ class CarStore {
       }
       return false;
     } catch (error) {
-      throw new Error(`couldn't check if car is available: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't check if car is available`);
     }
   }
 
@@ -212,7 +221,8 @@ class CarStore {
       const sql = "UPDATE car SET status = 'Rented' WHERE id = ?";
       await DB.execute(sql, [id]);
     } catch (error) {
-      throw new Error(`couldn't update car to rented: ${error}`);
+      console.error(error);
+      throw new Error(`couldn't update car to rented`);
     }
   }
 }
