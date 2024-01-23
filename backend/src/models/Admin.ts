@@ -13,7 +13,7 @@ export type AdminInfo = {
   role: role;
 };
 class AdminStore {
-  async createAdmin(admin: Admin): Promise<void> {
+  async createAdmin(admin: Admin): Promise<AdminInfo> {
     try {
       const { email, password, first_name, last_name, role } = admin;
       const sql =
@@ -23,6 +23,12 @@ class AdminStore {
         parseInt(SALT_ROUNDS as string)
       );
       await DB.execute(sql, [email, hash, first_name, last_name, role]);
+      const sql2 =
+        "SELECT id, first_name, last_name, email, role FROM admin WHERE email = ?";
+      const [rows] = await DB.execute(sql2, email);
+      const result = rows as unknown as AdminInfo[];
+      const adminResult = result[0];
+      return adminResult;
     } catch (error) {
       console.error(error);
       throw new Error(`couldn't create admin`);
@@ -87,11 +93,11 @@ class AdminStore {
     }
   }
 
-  async getAdminInfo(id: number, email: string): Promise<AdminInfo | null> {
+  async getAdminInfo(id: number): Promise<AdminInfo | null> {
     try {
       const sql =
-        "SELECT id, email, first_name, last_name, role FROM admin WHERE id = ? AND email = ?";
-      const [rows] = await DB.execute(sql, [id, email]);
+        "SELECT id, email, first_name, last_name, role FROM admin WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
       const result = rows as unknown as AdminInfo[];
       if (result.length === 0) {
         return null;
@@ -111,6 +117,22 @@ class AdminStore {
     } catch (error) {
       console.error(error);
       throw new Error(`couldn't delete admin`);
+    }
+  }
+
+  async emailAlreadyExists(email: string): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM admin WHERE email = ?";
+      const [rows] = await DB.execute(sql, [email]);
+      const result = rows as unknown as Admin[];
+      if (result.length === 0) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if email already exists");
     }
   }
 }

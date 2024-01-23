@@ -1,6 +1,7 @@
 import CarStore from "../models/Car";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Car, { status } from "../entities/carEntity";
+import CustomError from "../utilities/CustomError";
 const store = new CarStore();
 export async function showCars(req: Request, res: Response) {
   try {
@@ -8,7 +9,7 @@ export async function showCars(req: Request, res: Response) {
     const availableOnly = req.query.availableOnly;
 
     if (!country) {
-      throw new Error("no country chosen");
+      throw new CustomError("no country chosen", 422);
     }
 
     let cars: Car[] | null;
@@ -17,11 +18,16 @@ export async function showCars(req: Request, res: Response) {
     } else if (availableOnly === "false") {
       cars = await store.searchByCountry(country as string);
     } else {
-      throw new Error("availability not chosen");
+      throw new CustomError("availability not chosen", 422);
     }
 
     res.json(cars);
   } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
     res.json(error);
   }
 }
@@ -43,18 +49,18 @@ export async function searchCars(req: Request, res: Response) {
     const availableOnly = req.query.availableOnly;
     let availability: boolean;
     if (!country) {
-      throw new Error("no country chosen");
+      throw new CustomError("no country chosen", 422);
     }
 
     if (!search) {
-      throw new Error("no search value found");
+      throw new CustomError("no search value found", 422);
     }
     if (availableOnly === "true") {
       availability = true;
     } else if (availableOnly === "false") {
       availability = false;
     } else {
-      throw new Error("availability not chosen");
+      throw new CustomError("availability not chosen", 422);
     }
     const cars = await store.search(
       country as string,
@@ -64,7 +70,12 @@ export async function searchCars(req: Request, res: Response) {
 
     res.json(cars);
   } catch (error) {
-    res.status(400);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(400);
+    }
+
     res.json(error);
   }
 }
@@ -83,6 +94,72 @@ export async function addCar(req: Request, res: Response) {
     };
     await store.createCar(car);
   } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+
+export async function editCar(req: Request, res: Response) {
+  try {
+    const car: Car = {
+      id: parseInt(req.query.id as string),
+      color: req.body.color as unknown as string,
+      country: req.body.country as unknown as string,
+      model: req.body.model as unknown as string,
+      image_url: req.body.image_url as unknown as string,
+      plate_id: req.body.plate_id as unknown as string,
+      price_per_day: req.body.model as unknown as number,
+      status: req.body.status as unknown as status,
+      year: req.body.year as unknown as string,
+    };
+    await store.updateCar(car);
+  } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+export async function showAllCountries(req: Request, res: Response) {
+  try {
+    const countries = await store.getCountries();
+    res.json(countries);
+  } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+
+export async function checkIfAvailable(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = parseInt(req.query.id as string);
+    const check = await store.checkAvailable(id);
+    if (!check) {
+      throw new CustomError("car is not available", 200);
+    }
+
+    next();
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+
+    res.json(error);
+  }
+}
+
+export async function RentCar(req: Request, res: Response) {
+  try {
+    const id = parseInt(req.query.id as string);
+    await store.updateToRented(id);
+    res.status(200);
+    res.json("Car rented successfully");
+  } catch (error) {
+    res.status(500);
     res.json(error);
   }
 }

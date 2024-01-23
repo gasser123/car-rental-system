@@ -4,13 +4,14 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
+import CustomError from "../utilities/CustomError";
 dotenv.config();
 const { TOKEN_SECRET } = process.env;
 const store = new CustomerStore();
 export const register = async (req: Request, res: Response) => {
   try {
     const customer: Customer = {
-      driver_license_no: req.body.driver_license_no,
+      driver_license_no: req.body.driver_license_no as unknown as string,
       first_name: req.body.first_name as unknown as string,
       last_name: req.body.last_name as unknown as string,
       email: req.body.email as unknown as string,
@@ -33,7 +34,7 @@ export const register = async (req: Request, res: Response) => {
 
     res.status(200).json("registered successfully");
   } catch (err) {
-    res.status(400);
+    res.status(500);
     res.json(err);
   }
 };
@@ -58,20 +59,21 @@ export async function login(req: Request, res: Response) {
 
       res.status(200).json("logged in successfully");
     } else {
+      res.status(200);
       res.json("invalid email or password");
     }
   } catch (error) {
-    res.status(400);
+    res.status(500);
     res.json(error);
   }
 }
 
-export async function logout(req: Request, res: Response) {
+export function logout(req: Request, res: Response) {
   res.clearCookie("token", {
     secure: false,
     httpOnly: true,
   });
-
+  res.status(200);
   res.json("logged out successfully");
 }
 
@@ -80,11 +82,11 @@ export async function getProfile(req: RequestObject, res: Response) {
     const customer_id = req.user_id;
 
     if (!customer_id) {
-      throw new Error("couldn't verify user");
+      throw new CustomError("couldn't verify user", 401);
     }
     const customerInfo = await store.getCustomerInfo(customer_id);
     if (!customerInfo) {
-      throw new Error("invalid token info");
+      throw new CustomError("invalid token info", 401);
     }
     res.json(customerInfo);
   } catch (error) {
@@ -92,7 +94,12 @@ export async function getProfile(req: RequestObject, res: Response) {
       secure: false,
       httpOnly: true,
     });
-    res.status(401);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+
     res.json(`erroring getting user profile`);
   }
 }
@@ -102,11 +109,11 @@ export const changePassword = async (req: RequestObject, res: Response) => {
     const customer_id = req.user_id;
     const { currentPassword, newPassword, confirmPassword } = req.body;
     if (newPassword !== confirmPassword) {
-      throw new Error("please confirm your password");
+      throw new CustomError("please confirm your password", 200);
     }
 
     if (!customer_id) {
-      throw new Error("couldn't verify user");
+      throw new CustomError("couldn't verify user", 401);
     }
     const check = await store.confirmCurrentPassword(
       customer_id,
@@ -117,13 +124,18 @@ export const changePassword = async (req: RequestObject, res: Response) => {
         customer_id,
         newPassword as unknown as string
       );
-
+      res.status(200);
       res.json("password changed successfully");
     } else {
-      throw new Error("wrong current password");
+      throw new CustomError("wrong current password", 200);
     }
   } catch (error) {
-    res.status(400);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+
     res.json(error);
   }
 };
@@ -132,7 +144,7 @@ export async function updateProfile(req: RequestObject, res: Response) {
   try {
     const customer_id = req.user_id;
     if (!customer_id) {
-      throw new Error("couldn't verify user");
+      throw new CustomError("couldn't verify user", 401);
     }
     const {
       driver_license_no,
@@ -147,7 +159,7 @@ export async function updateProfile(req: RequestObject, res: Response) {
       password as unknown as string
     );
     if (!check) {
-      throw new Error("wrong password");
+      throw new CustomError("wrong password", 200);
     }
     const customerInfo: CustomerInfo = {
       id: customer_id,
@@ -162,7 +174,12 @@ export async function updateProfile(req: RequestObject, res: Response) {
     res.status(200);
     res.json("profile updated successfully");
   } catch (error) {
-    res.status(500);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+
     res.json(error);
   }
 }

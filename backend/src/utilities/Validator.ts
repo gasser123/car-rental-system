@@ -19,12 +19,12 @@ class Validator {
   }
 
   validateName(value: unknown): boolean {
-    if(!value){
+    if (!value) {
       return false;
     }
     const checkType = isString(value);
-    if(!checkType){
-     return false;
+    if (!checkType) {
+      return false;
     }
     const name = value as string;
     if (name.trim() === "") {
@@ -34,35 +34,35 @@ class Validator {
     }
   }
   validateEmail(value: unknown): boolean {
-    if(!value){
+    if (!value) {
       return false;
     }
     const checkType = isString(value);
-    if(!checkType){
-     return false;
+    if (!checkType) {
+      return false;
     }
     const inputEmail = value as string;
     return this.email.test(inputEmail);
   }
   validatePassword(value: unknown): boolean {
-    if(!value){
+    if (!value) {
       return false;
     }
     const checkType = isString(value);
-    if(!checkType){
-     return false;
+    if (!checkType) {
+      return false;
     }
     const inputPassword = value as string;
     return this.password.test(inputPassword);
   }
 
   validateLicense(value: unknown): boolean {
-    if(!value){
+    if (!value) {
       return false;
     }
     const checkType = isString(value);
-    if(!checkType){
-     return false;
+    if (!checkType) {
+      return false;
     }
     const license = value as string;
     if (license.trim() === "") {
@@ -72,12 +72,12 @@ class Validator {
     }
   }
   validateMobileNo(value: unknown): boolean {
-    if(!value){
+    if (!value) {
       return false;
     }
     const checkType = isString(value);
-    if(!checkType){
-     return false;
+    if (!checkType) {
+      return false;
     }
     const mobile_no = value as string;
     if (mobile_no.trim() === "") {
@@ -86,5 +86,22 @@ class Validator {
       return true;
     }
   }
+  validateRole(value: unknown): boolean {
+    if (!value) {
+      return false;
+    }
+    const checkType = isString(value);
+    if (!checkType) {
+      return false;
+    }
+    const role = value as string;
+
+    if (role === "root_admin" || role === "admin") {
+      return true;
+    }
+
+    return false;
+  }
 }
+
 export default Validator;

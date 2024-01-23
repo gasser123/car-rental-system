@@ -2,9 +2,13 @@ import { Request, Response, NextFunction } from "express";
 import CustomerStore from "../models/Customer";
 import Validator from "../utilities/Validator";
 import CarValidator from "../utilities/CarValidator";
+import LocationValidator from "../utilities/LocationValidator";
+import isValidId from "../utilities/idValidate";
+import AdminStore from "../models/Admin";
 const customerStore = new CustomerStore();
 const validator = new Validator();
 const carValidator = new CarValidator();
+const adminStore = new AdminStore();
 export const validateCustomerInputs = (
   req: Request,
   res: Response,
@@ -143,6 +147,137 @@ export const validateCarInputs = (
     if (!isValidStatus) {
       throw new Error("Invalid status");
     }
+    next();
+  } catch (error) {
+    res.status(422);
+    res.json(error);
+  }
+};
+
+export const validateLocationInputs = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const locationValidator = new LocationValidator();
+    const country = req.body.country as unknown;
+    const city = req.body.city as unknown;
+    const address = req.body.address as unknown;
+
+    const isValidCountry = locationValidator.validateInput(country);
+    const isValidCity = locationValidator.validateInput(city);
+    const isValidAddress = locationValidator.validateInput(address);
+    if (!isValidCountry) {
+      throw new Error("invalid country input");
+    }
+
+    if (!isValidAddress) {
+      throw new Error("invalid address input");
+    }
+    if (!isValidCity) {
+      throw new Error("invalid city input");
+    }
+
+    next();
+  } catch (error) {
+    res.status(422);
+    res.json(error);
+  }
+};
+
+export const validateId = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = parseInt(req.query.id as string);
+    const isValid = isValidId(id);
+    if (!isValid) {
+      throw new Error("invalid id");
+    }
+
+    next();
+  } catch (error) {
+    res.status(422);
+    res.json(error);
+  }
+};
+
+export const validateAdminSignup = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const first_name = req.body.first_name as unknown;
+    const last_name = req.body.last_name as unknown;
+    const email = req.body.email as unknown;
+    const password = req.body.password as unknown;
+
+    const isValidFirst_name = validator.validateName(first_name);
+    const isValidLast_name = validator.validateName(last_name);
+    const isValidEmail = validator.validateEmail(email);
+    const isValidPassword = validator.validatePassword(password);
+
+    if (!isValidFirst_name) {
+      throw new Error("invalid first name");
+    }
+
+    if (!isValidLast_name) {
+      throw new Error("invalid last name");
+    }
+
+    if (!isValidEmail) {
+      throw new Error("invalid email");
+    }
+
+    if (!isValidPassword) {
+      throw new Error("invalid password");
+    }
+
+    next();
+  } catch (error) {
+    res.status(422);
+    res.json(error);
+  }
+};
+
+export const validateAdminEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const email = req.body.email as unknown as string;
+    const alreadyExists = await adminStore.emailAlreadyExists(email);
+    if (alreadyExists) {
+      res.status(200);
+      res.json("email is already used");
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500);
+    res.json("error checking email");
+  }
+};
+
+export const validateLoginInputs = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.body.email as unknown;
+    const password = req.body.password as unknown;
+    const isValidEmail = validator.validateEmail(email);
+    const isValidPassword = validator.validatePassword(password);
+    if (!isValidEmail) {
+      throw new Error("invalid email");
+    }
+
+    if (!isValidPassword) {
+      throw new Error("invalid password");
+    }
+
     next();
   } catch (error) {
     res.status(422);

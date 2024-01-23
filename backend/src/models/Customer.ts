@@ -45,7 +45,7 @@ class CustomerStore {
       return customerResult;
     } catch (error) {
       console.error(error);
-      throw new Error(`couldn't create car`);
+      throw new Error(`couldn't create customer`);
     }
   }
 

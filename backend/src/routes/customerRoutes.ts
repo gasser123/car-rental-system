@@ -2,6 +2,7 @@ import express from "express";
 import {
   validateCustomerEmail,
   validateCustomerInputs,
+  validateLoginInputs
 } from "../middlewares/inputValidation";
 import verifyAuthToken from "../middlewares/jwtValidation";
 import {
@@ -19,7 +20,7 @@ const customerRoutes = (app: express.Application) => {
     validateCustomerEmail,
     register
   );
-  app.post("/login", login);
+  app.post("/login", validateLoginInputs, login);
   app.post("/logout", logout);
   app.get("/profile", verifyAuthToken, getProfile);
   app.patch("/changepassword", verifyAuthToken, changePassword);
