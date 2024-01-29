@@ -5,6 +5,7 @@ import CarValidator from "../utilities/CarValidator";
 import LocationValidator from "../utilities/LocationValidator";
 import isValidId from "../utilities/idValidate";
 import AdminStore from "../models/Admin";
+import RequestObject from "../entities/requestObject";
 const customerStore = new CustomerStore();
 const validator = new Validator();
 const carValidator = new CarValidator();
@@ -83,7 +84,7 @@ export const validateCustomerEmail = async (
 };
 
 export const validateCarInputs = (
-  req: Request,
+  req: RequestObject,
   res: Response,
   next: NextFunction
 ) => {
@@ -186,7 +187,7 @@ export const validateLocationInputs = (
   }
 };
 
-export const validateId = (req: Request, res: Response, next: NextFunction) => {
+export const validateId = (req: RequestObject, res: Response, next: NextFunction) => {
   try {
     const id = parseInt(req.query.id as string);
     const isValid = isValidId(id);
@@ -202,7 +203,7 @@ export const validateId = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const validateAdminSignup = (
-  req: Request,
+  req: RequestObject,
   res: Response,
   next: NextFunction
 ) => {
@@ -241,7 +242,7 @@ export const validateAdminSignup = (
 };
 
 export const validateAdminEmail = async (
-  req: Request,
+  req: RequestObject,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

@@ -10,6 +10,10 @@ function isValidId(id: number) {
     return false;
   }
 
+  const check = isNaN(id);
+  if (check) {
+    return false;
+  }
   return true;
 }
 

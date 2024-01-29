@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import PickupLocationStore from "../models/PickupLocation";
 import CustomError from "../utilities/CustomError";
 import PickupLocation from "../entities/pickupLocationEntity";
+import RequestObject from "../entities/requestObject";
 const store = new PickupLocationStore();
-export async function getPickupLocations(_req: Request, res: Response) {
+export async function getPickupLocations(_req: RequestObject, res: Response) {
   try {
     const locations = await store.getAll();
     res.status(200);
@@ -99,7 +100,7 @@ export async function searchCountryPickup(req: Request, res: Response) {
     res.json(error);
   }
 }
-export async function advancedSearchPickup(req: Request, res: Response) {
+export async function advancedSearchPickup(req: RequestObject, res: Response) {
   try {
     const searchValue = req.query.value;
     if (!searchValue) {

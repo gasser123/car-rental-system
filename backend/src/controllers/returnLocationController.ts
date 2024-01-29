@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import ReturnLocationStore from "../models/ReturnLocation";
 import CustomError from "../utilities/CustomError";
 import PickupLocation from "../entities/pickupLocationEntity";
+import RequestObject from "../entities/requestObject";
 const store = new ReturnLocationStore();
-export async function getReturnLocations(_req: Request, res: Response) {
+export async function getReturnLocations(_req: RequestObject, res: Response) {
   try {
     const locations = await store.getAll();
     res.status(200);
@@ -99,7 +100,7 @@ export async function searchCountryReturn(req: Request, res: Response) {
     res.json(error);
   }
 }
-export async function advancedSearchReturn(req: Request, res: Response) {
+export async function advancedSearchReturn(req: RequestObject, res: Response) {
   try {
     const searchValue = req.query.value;
     if (!searchValue) {

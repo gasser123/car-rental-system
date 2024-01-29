@@ -26,6 +26,7 @@ export const verifyAuthToken = (
     req.user_id = customer_id;
     next();
   } catch (error) {
+    res.status(401);
     res.clearCookie("token", {
       secure: false,
       httpOnly: true,
@@ -54,6 +55,7 @@ export const verifyAdminToken = (
     req.role = admin_role;
     next();
   } catch (error) {
+    res.status(401);
     res.clearCookie("token", {
       secure: false,
       httpOnly: true,

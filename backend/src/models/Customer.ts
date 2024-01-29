@@ -27,6 +27,7 @@ class CustomerStore {
         password + BCRYPT_PASSWORD,
         parseInt(SALT_ROUNDS as string)
       );
+
       const sql =
         "INSERT INTO customer(driver_license_no, first_name, last_name, email, password, mobile_no) VALUES(?, ?, ?, ?, ?, ?)";
       await DB.execute(sql, [
@@ -98,9 +99,7 @@ class CustomerStore {
       throw new Error(`couldn't get all customers`);
     }
   }
-  async getCustomerInfo(
-    id: number
-  ): Promise<CustomerInfo | null> {
+  async getCustomerInfo(id: number): Promise<CustomerInfo | null> {
     try {
       const sql =
         "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer WHERE id = ?";
@@ -153,7 +152,7 @@ class CustomerStore {
 
   async confirmCurrentPassword(id: number, password: string): Promise<boolean> {
     try {
-      const sql = "SELECT password FROM user WHERE id = ?";
+      const sql = "SELECT password FROM customer WHERE id = ?";
       const [rows] = await DB.execute(sql, [id]);
       const result = rows as unknown as { password: string }[];
       if (result.length === 0) {
@@ -201,18 +200,27 @@ class CustomerStore {
   async emailAlreadyExists(email: string): Promise<boolean> {
     try {
       const sql = "SELECT * FROM customer WHERE email = ?";
-    const [rows] = await DB.execute(sql, [email]);
-    const result = rows as unknown as Customer[];
-    if (result.length === 0) {
-      return false;
-    }
+      const [rows] = await DB.execute(sql, [email]);
+      const result = rows as unknown as Customer[];
+      if (result.length === 0) {
+        return false;
+      }
 
-    return true;
+      return true;
     } catch (error) {
       console.error(error);
       throw new Error("couldn't check if email already exists");
     }
-    
+  }
+
+  async verifyCustomer(id: number) {
+    try {
+      const sql = "UPDATE customer SET verified = ? WHERE id = ?";
+      await DB.execute(sql, [true, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't activate user account");
+    }
   }
 }
 export default CustomerStore;

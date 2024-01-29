@@ -4,7 +4,7 @@ import {
   validateCustomerInputs,
   validateLoginInputs
 } from "../middlewares/inputValidation";
-import verifyAuthToken from "../middlewares/jwtValidation";
+import {verifyAuthToken} from "../middlewares/jwtValidation";
 import {
   register,
   login,
@@ -12,6 +12,7 @@ import {
   getProfile,
   changePassword,
   updateProfile,
+  showCustomerReservations
 } from "../controllers/customerController";
 const customerRoutes = (app: express.Application) => {
   app.post(
@@ -25,12 +26,14 @@ const customerRoutes = (app: express.Application) => {
   app.get("/profile", verifyAuthToken, getProfile);
   app.patch("/changepassword", verifyAuthToken, changePassword);
   app.patch(
-    "/updateprofile",
+    "/profile",
     validateCustomerInputs,
     validateCustomerEmail,
     verifyAuthToken,
     updateProfile
   );
+
+  app.get("/history", verifyAuthToken, showCustomerReservations);
 };
 
 export default customerRoutes;

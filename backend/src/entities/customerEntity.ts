@@ -6,5 +6,6 @@ interface Customer {
   email: string;
   password: string;
   mobile_no: string;
+  verified?: boolean;
 }
 export default Customer;

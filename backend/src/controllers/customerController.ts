@@ -5,9 +5,11 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
+import { getCustomerReservations } from "../services/reservationServices";
 dotenv.config();
 const { TOKEN_SECRET } = process.env;
 const store = new CustomerStore();
+
 export const register = async (req: Request, res: Response) => {
   try {
     const customer: Customer = {
@@ -180,6 +182,38 @@ export async function updateProfile(req: RequestObject, res: Response) {
       res.status(500);
     }
 
+    res.json(error);
+  }
+}
+
+export async function showCustomerReservations(
+  req: RequestObject,
+  res: Response
+) {
+  try {
+    const user_id = req.user_id;
+    if (!user_id) {
+      throw new Error("user id not found");
+    }
+
+    const customerReservations = await getCustomerReservations(user_id);
+    res.status(200);
+    res.json(customerReservations);
+  } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+
+export async function activateAccount(req: RequestObject, res: Response) {
+  try {
+    const id = req.user_id;
+    if (!id) {
+      throw new Error("couldn't activate account user credential is missing");
+    }
+    await store.verifyCustomer(id);
+  } catch (error) {
+    res.status(500);
     res.json(error);
   }
 }

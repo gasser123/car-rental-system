@@ -2,8 +2,9 @@ import CarStore from "../models/Car";
 import { NextFunction, Request, Response } from "express";
 import Car, { status } from "../entities/carEntity";
 import CustomError from "../utilities/CustomError";
+import RequestObject from "../entities/requestObject";
 const store = new CarStore();
-export async function showCars(req: Request, res: Response) {
+export async function showCarsToCustomers(req: Request, res: Response) {
   try {
     const country = req.query.country;
     const availableOnly = req.query.availableOnly;
@@ -32,7 +33,7 @@ export async function showCars(req: Request, res: Response) {
   }
 }
 
-export async function showAllCars(req: Request, res: Response) {
+export async function showAllCars(req: RequestObject, res: Response) {
   try {
     const cars = await store.getAllCars();
     res.json(cars);
@@ -80,7 +81,7 @@ export async function searchCars(req: Request, res: Response) {
   }
 }
 
-export async function addCar(req: Request, res: Response) {
+export async function addCar(req: RequestObject, res: Response) {
   try {
     const car: Car = {
       color: req.body.color as unknown as string,
@@ -99,10 +100,10 @@ export async function addCar(req: Request, res: Response) {
   }
 }
 
-export async function editCar(req: Request, res: Response) {
+export async function editCar(req: RequestObject, res: Response) {
   try {
     const car: Car = {
-      id: parseInt(req.query.id as string),
+      id: parseInt(req.params.id as string),
       color: req.body.color as unknown as string,
       country: req.body.country as unknown as string,
       model: req.body.model as unknown as string,
@@ -152,14 +153,41 @@ export async function checkIfAvailable(
   }
 }
 
-export async function RentCar(req: Request, res: Response) {
+export async function RentCar(req: RequestObject, res: Response) {
   try {
-    const id = parseInt(req.query.id as string);
+    const id = req.car_id;
+    if (!id) {
+      throw new Error("car id not specified for reservation");
+    }
     await store.updateToRented(id);
     res.status(200);
     res.json("Car rented successfully");
   } catch (error) {
     res.status(500);
+    res.json(error);
+  }
+}
+
+export async function advancedSearchCars(req: RequestObject, res: Response) {
+  try {
+    const search = req.query.search;
+
+    if (!search) {
+      throw new CustomError("no search value found", 422);
+    }
+
+    const searchValue = search as string;
+
+    const cars = await store.advancedSearch(searchValue);
+
+    res.json(cars);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(400);
+    }
+
     res.json(error);
   }
 }

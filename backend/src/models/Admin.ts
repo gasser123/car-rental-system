@@ -10,7 +10,7 @@ export type AdminInfo = {
   email: string;
   first_name: string;
   last_name: string;
-  role: role;
+  role?: role;
 };
 class AdminStore {
   async createAdmin(admin: Admin): Promise<AdminInfo> {
@@ -110,6 +110,18 @@ class AdminStore {
     }
   }
 
+  async updateAdminInfo(adminInfo: AdminInfo): Promise<void> {
+    try {
+      const { id, first_name, last_name, email } = adminInfo;
+      const sql =
+        "UPDATE admin SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
+      await DB.execute(sql, [first_name, last_name, email, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't update customer info`);
+    }
+  }
+
   async deleteAdmin(id: number): Promise<void> {
     try {
       const sql = "DELETE FROM admin WHERE id = ?";
@@ -133,6 +145,41 @@ class AdminStore {
     } catch (error) {
       console.error(error);
       throw new Error("couldn't check if email already exists");
+    }
+  }
+
+  async updateAdminPassword(id: number, password: string): Promise<void> {
+    try {
+      const sql = "UPDATE admin SET password = ? WHERE id = ?";
+      const hash = bcrypt.hashSync(
+        password + BCRYPT_PASSWORD,
+        parseInt(SALT_ROUNDS as string)
+      );
+      await DB.execute(sql, [hash, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't update admin password`);
+    }
+  }
+
+  async confirmCurrentPassword(id: number, password: string): Promise<boolean> {
+    try {
+      const sql = "SELECT password FROM admin WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as unknown as { password: string }[];
+      if (result.length === 0) {
+        throw new Error("couldn't find the user to confirm password");
+      }
+
+      const currentPassword = result[0].password;
+      const check = bcrypt.compareSync(
+        password + BCRYPT_PASSWORD,
+        currentPassword
+      );
+      return check;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't confirm current password`);
     }
   }
 }
