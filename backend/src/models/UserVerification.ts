@@ -57,21 +57,40 @@ class UserVerificationStore {
     }
   }
 
-  async findToken(token: string):Promise<number | null>{
+  async findToken(token: string): Promise<number | null> {
     try {
       const sql = "SELECT * FROM verification WHERE token = ?";
       const [rows] = await DB.execute(sql, [token]);
       const result = rows as UserVerification[];
-      if(!result){
-         return null; 
+      if (result.length === 0) {
+        return null;
       }
       const customer_id = result[0].customer_id;
-      return customer_id;   
+      return customer_id;
     } catch (error) {
       console.error(error);
       throw new Error("couldn't find token");
     }
+  }
 
+  async isExpired(token: string): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM verification WHERE token = ?";
+      const [rows] = await DB.execute(sql, [token]);
+      const result = rows as UserVerification[];
+      if (result.length === 0) {
+        throw new Error("token not found");
+      }
+      const { expires_at } = result[0];
+      const check = expires_at - Date.now();
+      if (check < 0) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error(error);
+      throw new Error("error checking token");
+    }
   }
 }
 

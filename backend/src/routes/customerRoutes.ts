@@ -4,6 +4,7 @@ import {
   validateCustomerInputs,
   validateLoginInputs
 } from "../middlewares/inputValidation";
+import { createActivation } from "../controllers/userVerificationController";
 import {verifyAuthToken} from "../middlewares/jwtValidation";
 import {
   register,
@@ -19,7 +20,8 @@ const customerRoutes = (app: express.Application) => {
     "/register",
     validateCustomerInputs,
     validateCustomerEmail,
-    register
+    register,
+    createActivation
   );
   app.post("/login", validateLoginInputs, login);
   app.post("/logout", logout);

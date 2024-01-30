@@ -5,7 +5,7 @@ interface RequestObject extends Request {
   role?: role;
   total_amount?: number;
   car_id?: number;
-  user_email: string;
+  user_email?: string;
 }
 
 export default RequestObject;

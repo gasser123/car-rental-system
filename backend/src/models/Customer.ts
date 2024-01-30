@@ -11,6 +11,7 @@ export type CustomerInfo = {
   last_name: string;
   email: string;
   mobile_no: string;
+  verified?: number;
 };
 class CustomerStore {
   async createCustomer(customer: Customer): Promise<CustomerInfo> {
@@ -73,6 +74,7 @@ class CustomerStore {
             last_name: customer.last_name,
             email: customer.email,
             mobile_no: customer.mobile_no,
+            verified: customer.verified,
           };
           return customerInfo;
         }
@@ -216,10 +218,29 @@ class CustomerStore {
   async verifyCustomer(id: number) {
     try {
       const sql = "UPDATE customer SET verified = ? WHERE id = ?";
-      await DB.execute(sql, [true, id]);
+      await DB.execute(sql, [1, id]);
     } catch (error) {
       console.error(error);
       throw new Error("couldn't activate user account");
+    }
+  }
+
+  async isVerified(id: number): Promise<boolean> {
+    try {
+      const sql = "SELECT verified FROM customer WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as { verified: number }[];
+      if (result.length === 0) {
+        return false;
+      }
+      const verified = result[0].verified;
+      if (verified) {
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      throw new Error("couldn't check if user is verified");
     }
   }
 }

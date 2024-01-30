@@ -2,7 +2,7 @@ import CustomerStore, { CustomerInfo } from "../models/Customer";
 import Customer from "../entities/customerEntity";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
 import { getCustomerReservations } from "../services/reservationServices";
@@ -10,7 +10,11 @@ dotenv.config();
 const { TOKEN_SECRET } = process.env;
 const store = new CustomerStore();
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const customer: Customer = {
       driver_license_no: req.body.driver_license_no as unknown as string,
@@ -22,8 +26,11 @@ export const register = async (req: Request, res: Response) => {
     };
 
     const newCustomer = await store.createCustomer(customer);
+    if (!newCustomer.verified) {
+      throw new Error("couldn't obtain verification status");
+    }
     const token = jwt.sign(
-      { customer_id: newCustomer.id },
+      { customer_id: newCustomer.id, verified: newCustomer.verified },
       TOKEN_SECRET as string,
       { expiresIn: "7d" }
     );
@@ -33,8 +40,9 @@ export const register = async (req: Request, res: Response) => {
       secure: false, // set to true if you're using https
       httpOnly: true,
     });
-
-    res.status(200).json("registered successfully");
+    req.user_id = newCustomer.id;
+    req.user_email = newCustomer.email;
+    next();
   } catch (err) {
     res.status(500);
     res.json(err);
@@ -47,8 +55,11 @@ export async function login(req: Request, res: Response) {
     const password = req.body.password as unknown as string;
     const customer = await store.authenticate(email, password);
     if (customer != null) {
+      if (!customer.verified) {
+        throw new Error("couldn't obtain verification status");
+      }
       const token = jwt.sign(
-        { customer_id: customer.id },
+        { customer_id: customer.id, verified: customer.verified },
         TOKEN_SECRET as string,
         { expiresIn: "7d" }
       );
@@ -212,6 +223,59 @@ export async function activateAccount(req: RequestObject, res: Response) {
       throw new Error("couldn't activate account user credential is missing");
     }
     await store.verifyCustomer(id);
+  } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+
+export async function passCustomerEmail(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = req.user_id;
+    if (!id) {
+      throw new Error("couldn't find user credential");
+    }
+    const customerInfo = await store.getCustomerInfo(id);
+    if (!customerInfo) {
+      res.clearCookie("token", {
+        secure: false,
+        httpOnly: true,
+      });
+      throw new Error("couldn't find user");
+    }
+    const { email } = customerInfo;
+    req.user_email = email;
+    next();
+  } catch (error) {
+    res.status(500);
+    res.json(error);
+  }
+}
+
+export async function checkVerified(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const customer_id = req.user_id;
+    if (!customer_id) {
+      res.clearCookie("token", {
+        secure: false,
+        httpOnly: true,
+      });
+      throw new Error("user credential not found");
+    }
+    const check = await store.isVerified(customer_id);
+    if (check) {
+      res.status(200);
+      res.json("user account is already activated");
+    }
+    next();
   } catch (error) {
     res.status(500);
     res.json(error);

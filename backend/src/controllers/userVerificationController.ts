@@ -1,4 +1,4 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import UserVerificationStore from "../models/UserVerification";
 import RequestObject from "../entities/requestObject";
 import sendMail from "../utilities/mail";
@@ -20,6 +20,9 @@ export async function createActivation(req: RequestObject, res: Response) {
                </div>
     
                `;
+    if (!email) {
+      throw new Error("user email is missing");
+    }
     sendMail(email, "Account activation", html);
     res.status(200);
     res.json("email is being sent");
@@ -45,6 +48,10 @@ export async function recreateActivation(req: RequestObject, res: Response) {
                    </div>
         
                    `;
+
+    if (!email) {
+      throw new Error("user email is missing");
+    }
     sendMail(email, "Account activation", html);
     res.status(200);
     res.json("email is being sent");
@@ -79,6 +86,33 @@ export async function searchToken(
       res.status(500);
     }
 
+    res.json(error);
+  }
+}
+
+export async function checkExpired(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.token;
+    if (!value) {
+      throw new CustomError("invalid token", 422);
+    }
+    const token = value as string;
+    const isExpired = await store.isExpired(token);
+    if (isExpired) {
+      res.status(410);
+      res.json("link expired");
+    }
+    next();
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
     res.json(error);
   }
 }
