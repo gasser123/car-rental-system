@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import ReturnLocationStore from "../models/ReturnLocation";
 import CustomError from "../utilities/CustomError";
-import PickupLocation from "../entities/pickupLocationEntity";
+import ReturnLocation from "../entities/returnLocationEntity";
 import RequestObject from "../entities/requestObject";
 const store = new ReturnLocationStore();
 export async function getReturnLocations(_req: RequestObject, res: Response) {
@@ -17,7 +17,7 @@ export async function getReturnLocations(_req: RequestObject, res: Response) {
 
 export async function addReturnLocation(req: Request, res: Response) {
   try {
-    const location: PickupLocation = {
+    const location: ReturnLocation = {
       country: req.body.country as unknown as string,
       city: req.body.city as unknown as string,
       address: req.body.address as unknown as string,
@@ -33,7 +33,11 @@ export async function addReturnLocation(req: Request, res: Response) {
 
 export async function editReturnLocation(req: Request, res: Response) {
   try {
-    const location: PickupLocation = {
+    const value = req.query.id;
+    if (!value) {
+      throw new CustomError("id is missing", 422);
+    }
+    const location: ReturnLocation = {
       id: parseInt(req.query.id as string),
       country: req.body.country as unknown as string,
       city: req.body.city as unknown as string,
@@ -41,19 +45,32 @@ export async function editReturnLocation(req: Request, res: Response) {
     };
     await store.updateReturnLocation(location);
     res.status(200);
-    res.json("new pickup location added successfully");
+    res.json("return location updated successfully");
   } catch (error) {
-    res.status(500);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
     res.json(error);
   }
 }
 
 export async function removeReturnLocation(req: Request, res: Response) {
   try {
+    const value = req.query.id;
+    if (!value) {
+      throw new CustomError("id is missing", 422);
+    }
     const id = parseInt(req.query.id as string);
     await store.deleteReturnLocation(id);
+    res.status(200).json("deleted location successfully");
   } catch (error) {
-    res.status(500);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
     res.json(error);
   }
 }

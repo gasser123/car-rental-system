@@ -15,7 +15,7 @@ export async function getPickupLocations(_req: RequestObject, res: Response) {
   }
 }
 
-export async function addPickupLocation(req: Request, res: Response) {
+export async function addPickupLocation(req: RequestObject, res: Response) {
   try {
     const location: PickupLocation = {
       country: req.body.country as unknown as string,
@@ -33,6 +33,10 @@ export async function addPickupLocation(req: Request, res: Response) {
 
 export async function editPickupLocation(req: Request, res: Response) {
   try {
+    const value = req.query.id;
+    if (!value) {
+      throw new CustomError("pickup location id is missing", 422);
+    }
     const location: PickupLocation = {
       id: parseInt(req.query.id as string),
       country: req.body.country as unknown as string,
@@ -43,17 +47,31 @@ export async function editPickupLocation(req: Request, res: Response) {
     res.status(200);
     res.json("new pickup location added successfully");
   } catch (error) {
-    res.status(500);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+
     res.json(error);
   }
 }
 
 export async function removePickupLocation(req: Request, res: Response) {
   try {
+    const value = req.query.id;
+    if (!value) {
+      throw new CustomError("id is missing", 422);
+    }
     const id = parseInt(req.query.id as string);
     await store.deletePickupLocation(id);
+    res.status(200).json("deleted location successfully");
   } catch (error) {
-    res.status(500);
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
     res.json(error);
   }
 }

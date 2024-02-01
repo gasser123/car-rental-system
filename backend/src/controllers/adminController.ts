@@ -1,18 +1,10 @@
-import { Application, Request, Response } from "express";
+import { Request, Response } from "express";
 import AdminStore, { AdminInfo } from "../models/Admin";
 import Admin from "../entities/adminEntity";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import {
-  validateAdminSignup,
-  validateAdminEmail,
-  validateLoginInputs,
-  validateCarInputs,
-} from "../middlewares/inputValidation";
 import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
-import { verifyAdminToken } from "../middlewares/jwtValidation";
-import { addCar, editCar } from "./carController";
 dotenv.config();
 const { ADMIN_TOKEN_SECRET } = process.env;
 const store = new AdminStore();
@@ -179,5 +171,3 @@ export async function showAdmins(req: RequestObject, res: Response) {
     res.json(error);
   }
 }
-
-

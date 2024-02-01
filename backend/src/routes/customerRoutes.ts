@@ -2,10 +2,13 @@ import express from "express";
 import {
   validateCustomerEmail,
   validateCustomerInputs,
-  validateLoginInputs
+  validateLoginInputs,
 } from "../middlewares/inputValidation";
 import { createActivation } from "../controllers/userVerificationController";
-import {verifyAuthToken} from "../middlewares/jwtValidation";
+import {
+  verifyAuthToken,
+  verifyAdminToken,
+} from "../middlewares/jwtValidation";
 import {
   register,
   login,
@@ -13,7 +16,8 @@ import {
   getProfile,
   changePassword,
   updateProfile,
-  showCustomerReservations
+  showCustomerReservations,
+  advancedSearchCustomers,
 } from "../controllers/customerController";
 const customerRoutes = (app: express.Application) => {
   app.post(
@@ -36,6 +40,7 @@ const customerRoutes = (app: express.Application) => {
   );
 
   app.get("/history", verifyAuthToken, showCustomerReservations);
+  app.get("/customers", verifyAdminToken, advancedSearchCustomers);
 };
 
 export default customerRoutes;

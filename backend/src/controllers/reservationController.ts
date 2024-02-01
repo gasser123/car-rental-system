@@ -1,15 +1,10 @@
-import { Application, NextFunction, Request, Response } from "express";
-import {
-  verifyAdminToken,
-  verifyAuthToken,
-} from "../middlewares/jwtValidation";
+import { NextFunction, Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
 import ReservationStore from "../models/Reservation";
 import Reservation from "../entities/reservationEntity";
-import { RentCar } from "./carController";
 const store = new ReservationStore();
-async function makeAReservation(
+export async function makeAReservation(
   req: RequestObject,
   res: Response,
   next: NextFunction
@@ -46,7 +41,7 @@ async function makeAReservation(
   }
 }
 
-async function showAllReservations(req: Request, res: Response) {
+export async function showAllReservations(req: Request, res: Response) {
   try {
     const reservations = await store.getAllReservations();
     res.json(reservations);
@@ -55,10 +50,3 @@ async function showAllReservations(req: Request, res: Response) {
     res.json(error);
   }
 }
-
-const reservationRoutes = (app: Application) => {
-  app.post("/reservations", verifyAuthToken, makeAReservation, RentCar);
-  app.get("/reservations", verifyAdminToken, showAllReservations);
-};
-
-export default reservationRoutes;

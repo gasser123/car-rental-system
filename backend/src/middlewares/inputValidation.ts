@@ -156,7 +156,7 @@ export const validateCarInputs = (
 };
 
 export const validateLocationInputs = (
-  req: Request,
+  req: RequestObject,
   res: Response,
   next: NextFunction
 ) => {

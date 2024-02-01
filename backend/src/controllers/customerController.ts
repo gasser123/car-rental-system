@@ -281,3 +281,26 @@ export async function checkVerified(
     res.json(error);
   }
 }
+
+export async function advancedSearchCustomers(
+  req: RequestObject,
+  res: Response
+) {
+  try {
+    const value = req.query.search;
+    if (!value) {
+      throw new CustomError("search query is missing", 422);
+    }
+    const search = value as string;
+    const customersInfo = await store.advancedSearch(search);
+    res.status(200);
+    res.json(customersInfo);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+    } else {
+      res.status(500);
+    }
+    res.json(error);
+  }
+}

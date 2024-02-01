@@ -9,7 +9,7 @@ class UserVerificationStore {
       const verification: UserVerification = {
         customer_id: customer_id,
         created_at: Date.now(),
-        expires_at: Date.now() + 1000 * 60 * 60 * 6,
+        expires_at: Date.now() + 1000 * 60 * 60 * 2,
         token: token,
       };
 
@@ -36,7 +36,7 @@ class UserVerificationStore {
       const verification: UserVerification = {
         customer_id: customer_id,
         created_at: Date.now(),
-        expires_at: Date.now() + 1000 * 60 * 60 * 6,
+        expires_at: Date.now() + 1000 * 60 * 60 * 2,
         token: token,
       };
 

@@ -3,18 +3,36 @@ import {
   getCountryReturn,
   searchCountryReturn,
   getReturnLocations,
-  advancedSearchReturn
+  advancedSearchReturn,
+  addReturnLocation,
+  editReturnLocation,
+  removeReturnLocation,
 } from "../controllers/returnLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
+import { validateLocationInputs } from "../middlewares/inputValidation";
 const returnLocationRoutes = (app: Application) => {
   app.get("/returnlocations", getCountryReturn);
-  app.get("/pickuplocations/all", verifyAdminToken, getReturnLocations);
+  app.get("/returnlocations/all", verifyAdminToken, getReturnLocations);
   app.get("/returnlocations/search", searchCountryReturn);
   app.get(
-    "/pickuplocations/advancedsearch",
+    "/returnlocations/advancedsearch",
     verifyAdminToken,
     advancedSearchReturn
   );
+  app.post(
+    "/returnlocations",
+    verifyAdminToken,
+    validateLocationInputs,
+    addReturnLocation
+  );
+
+  app.patch(
+    "/returnlocations",
+    verifyAdminToken,
+    validateLocationInputs,
+    editReturnLocation
+  );
+  app.delete("/returnlocations", verifyAdminToken, removeReturnLocation);
 };
 
 export default returnLocationRoutes;
