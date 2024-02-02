@@ -43,9 +43,13 @@ export const register = async (
     req.user_id = newCustomer.id;
     req.user_email = newCustomer.email;
     next();
-  } catch (err) {
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(err);
+    res.json(message);
   }
 };
 
@@ -76,8 +80,12 @@ export async function login(req: Request, res: Response) {
       res.json("invalid email or password");
     }
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -86,8 +94,7 @@ export function logout(req: Request, res: Response) {
     secure: false,
     httpOnly: true,
   });
-  res.status(200);
-  res.json("logged out successfully");
+  res.redirect("http://localhost:8080/");
 }
 
 export async function getProfile(req: RequestObject, res: Response) {
@@ -120,11 +127,7 @@ export async function getProfile(req: RequestObject, res: Response) {
 export const changePassword = async (req: RequestObject, res: Response) => {
   try {
     const customer_id = req.user_id;
-    const { currentPassword, newPassword, confirmPassword } = req.body;
-    if (newPassword !== confirmPassword) {
-      throw new CustomError("please confirm your password", 200);
-    }
-
+    const { currentPassword, newPassword } = req.body;
     if (!customer_id) {
       throw new CustomError("couldn't verify user", 401);
     }
@@ -143,13 +146,16 @@ export const changePassword = async (req: RequestObject, res: Response) => {
       throw new CustomError("wrong current password", 200);
     }
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 };
 
@@ -187,13 +193,16 @@ export async function updateProfile(req: RequestObject, res: Response) {
     res.status(200);
     res.json("profile updated successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -211,8 +220,12 @@ export async function showCustomerReservations(
     res.status(200);
     res.json(customerReservations);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -224,8 +237,12 @@ export async function activateAccount(req: RequestObject, res: Response) {
     }
     await store.verifyCustomer(id);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -251,8 +268,12 @@ export async function passCustomerEmail(
     req.user_email = email;
     next();
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -277,8 +298,12 @@ export async function checkVerified(
     }
     next();
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -296,11 +321,15 @@ export async function advancedSearchCustomers(
     res.status(200);
     res.json(customersInfo);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }

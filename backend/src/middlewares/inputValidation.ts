@@ -58,8 +58,12 @@ export const validateCustomerInputs = (
 
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
   }
 };
 
@@ -150,8 +154,12 @@ export const validateCarInputs = (
     }
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
   }
 };
 
@@ -182,12 +190,20 @@ export const validateLocationInputs = (
 
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
   }
 };
 
-export const validateId = (req: RequestObject, res: Response, next: NextFunction) => {
+export const validateId = (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = parseInt(req.query.id as string);
     const isValid = isValidId(id);
@@ -197,8 +213,12 @@ export const validateId = (req: RequestObject, res: Response, next: NextFunction
 
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
   }
 };
 
@@ -236,8 +256,12 @@ export const validateAdminSignup = (
 
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
   }
 };
 
@@ -281,7 +305,46 @@ export const validateLoginInputs = (
 
     next();
   } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
     res.status(422);
-    res.json(error);
+    res.json(message);
+  }
+};
+
+export const changePasswordValidate = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const checkCurrentPassword = validator.validatePassword(currentPassword);
+    const checkNewPassword = validator.validatePassword(newPassword);
+    const checkConfirmPassword = validator.validatePassword(confirmPassword);
+    if (!checkCurrentPassword) {
+      throw new Error("invalid current password");
+    }
+    if (!checkNewPassword) {
+      throw new Error("invalid new password");
+    }
+
+    if (!checkConfirmPassword) {
+      throw new Error("invalid confirm password");
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new Error("please confirm your password");
+    }
+    next();
+  } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
+    res.status(422);
+    res.json(message);
   }
 };

@@ -24,12 +24,16 @@ export async function showCarsToCustomers(req: Request, res: Response) {
 
     res.json(cars);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -38,8 +42,12 @@ export async function showAllCars(req: RequestObject, res: Response) {
     const cars = await store.getAllCars();
     res.json(cars);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -71,13 +79,16 @@ export async function searchCars(req: Request, res: Response) {
 
     res.json(cars);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(400);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -95,8 +106,12 @@ export async function addCar(req: RequestObject, res: Response) {
     };
     await store.createCar(car);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -115,8 +130,12 @@ export async function editCar(req: RequestObject, res: Response) {
     };
     await store.updateCar(car);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 export async function showAllCountries(req: Request, res: Response) {
@@ -124,8 +143,12 @@ export async function showAllCountries(req: Request, res: Response) {
     const countries = await store.getCountries();
     res.json(countries);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -143,13 +166,16 @@ export async function checkIfAvailable(
 
     next();
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -163,8 +189,12 @@ export async function RentCar(req: RequestObject, res: Response) {
     res.status(200);
     res.json("Car rented successfully");
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -182,12 +212,15 @@ export async function advancedSearchCars(req: RequestObject, res: Response) {
 
     res.json(cars);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
-      res.status(400);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }

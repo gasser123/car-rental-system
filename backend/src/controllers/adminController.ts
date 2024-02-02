@@ -22,8 +22,12 @@ export const register = async (req: Request, res: Response) => {
 
     res.status(200).json("registered successfully");
   } catch (err) {
+    let message = "";
+    if (err instanceof Error) {
+      message = err.message;
+    }
     res.status(500);
-    res.json(err);
+    res.json(message);
   }
 };
 
@@ -51,8 +55,12 @@ export async function login(req: Request, res: Response) {
       res.json("invalid email or password");
     }
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -61,8 +69,7 @@ export function logout(req: Request, res: Response) {
     secure: false,
     httpOnly: true,
   });
-  res.status(200);
-  res.json("logged out successfully");
+  res.redirect("http://localhost:8080/");
 }
 
 export async function getProfile(req: RequestObject, res: Response) {
@@ -115,15 +122,54 @@ export async function updateProfile(req: RequestObject, res: Response) {
     res.status(200);
     res.json("profile updated successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
+
+export const changePassword = async (req: RequestObject, res: Response) => {
+  try {
+    const admin_id = req.user_id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!admin_id) {
+      throw new CustomError("couldn't verify user", 401);
+    }
+    const check = await store.confirmCurrentPassword(
+      admin_id,
+      currentPassword as unknown as string
+    );
+    if (check) {
+      await store.updateAdminPassword(
+        admin_id,
+        newPassword as unknown as string
+      );
+      res.status(200);
+      res.json("password changed successfully");
+    } else {
+      throw new CustomError("wrong current password", 200);
+    }
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+};
 
 export async function removeAdmin(req: RequestObject, res: Response) {
   try {
@@ -139,13 +185,16 @@ export async function removeAdmin(req: RequestObject, res: Response) {
 
     await store.deleteAdmin(adminId);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -163,11 +212,15 @@ export async function showAdmins(req: RequestObject, res: Response) {
     res.status(200);
     res.json(adminsInfo);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }

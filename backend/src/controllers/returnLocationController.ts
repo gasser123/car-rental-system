@@ -10,8 +10,12 @@ export async function getReturnLocations(_req: RequestObject, res: Response) {
     res.status(200);
     res.json(locations);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -26,8 +30,12 @@ export async function addReturnLocation(req: Request, res: Response) {
     res.status(200);
     res.json("new return location added successfully");
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -47,12 +55,16 @@ export async function editReturnLocation(req: Request, res: Response) {
     res.status(200);
     res.json("return location updated successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -66,12 +78,16 @@ export async function removeReturnLocation(req: Request, res: Response) {
     await store.deleteReturnLocation(id);
     res.status(200).json("deleted location successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -85,12 +101,16 @@ export async function getCountryReturn(req: Request, res: Response) {
     const locations = await store.getByCountry(country);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -109,12 +129,16 @@ export async function searchCountryReturn(req: Request, res: Response) {
     const locations = await store.searchByCountry(country, search);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 export async function advancedSearchReturn(req: RequestObject, res: Response) {
@@ -127,11 +151,15 @@ export async function advancedSearchReturn(req: RequestObject, res: Response) {
     const locations = await store.advancedSearch(search);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }

@@ -27,8 +27,12 @@ export async function createActivation(req: RequestObject, res: Response) {
     res.status(200);
     res.json("email is being sent");
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -56,8 +60,12 @@ export async function recreateActivation(req: RequestObject, res: Response) {
     res.status(200);
     res.json("email is being sent");
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -80,13 +88,16 @@ export async function searchToken(
     req.user_id = customer_id;
     next();
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -108,11 +119,15 @@ export async function checkExpired(
     }
     next();
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }

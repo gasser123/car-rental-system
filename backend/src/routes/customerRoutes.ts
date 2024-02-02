@@ -3,6 +3,7 @@ import {
   validateCustomerEmail,
   validateCustomerInputs,
   validateLoginInputs,
+  changePasswordValidate,
 } from "../middlewares/inputValidation";
 import { createActivation } from "../controllers/userVerificationController";
 import {
@@ -30,7 +31,12 @@ const customerRoutes = (app: express.Application) => {
   app.post("/login", validateLoginInputs, login);
   app.post("/logout", logout);
   app.get("/profile", verifyAuthToken, getProfile);
-  app.patch("/changepassword", verifyAuthToken, changePassword);
+  app.patch(
+    "/changepassword",
+    verifyAuthToken,
+    changePasswordValidate,
+    changePassword
+  );
   app.patch(
     "/profile",
     validateCustomerInputs,

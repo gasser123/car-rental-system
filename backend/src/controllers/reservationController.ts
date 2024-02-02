@@ -31,13 +31,16 @@ export async function makeAReservation(
     req.car_id = reservation.car_id;
     next();
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -46,7 +49,11 @@ export async function showAllReservations(req: Request, res: Response) {
     const reservations = await store.getAllReservations();
     res.json(reservations);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }

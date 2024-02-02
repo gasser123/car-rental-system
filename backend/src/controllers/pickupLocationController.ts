@@ -10,8 +10,12 @@ export async function getPickupLocations(_req: RequestObject, res: Response) {
     res.status(200);
     res.json(locations);
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -26,8 +30,12 @@ export async function addPickupLocation(req: RequestObject, res: Response) {
     res.status(200);
     res.json("new pickup location added successfully");
   } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
     res.status(500);
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -47,13 +55,16 @@ export async function editPickupLocation(req: Request, res: Response) {
     res.status(200);
     res.json("new pickup location added successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
 
-    res.json(error);
+    res.json(message);
   }
 }
 
@@ -67,12 +78,16 @@ export async function removePickupLocation(req: Request, res: Response) {
     await store.deletePickupLocation(id);
     res.status(200).json("deleted location successfully");
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -86,12 +101,16 @@ export async function getCountryPickup(req: Request, res: Response) {
     const locations = await store.getByCountry(country);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 
@@ -110,12 +129,16 @@ export async function searchCountryPickup(req: Request, res: Response) {
     const locations = await store.searchByCountry(country, search);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
 export async function advancedSearchPickup(req: RequestObject, res: Response) {
@@ -128,11 +151,15 @@ export async function advancedSearchPickup(req: RequestObject, res: Response) {
     const locations = await store.advancedSearch(search);
     res.json(locations);
   } catch (error) {
+    let message = "";
     if (error instanceof CustomError) {
       res.status(error.status);
-    } else {
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
+      message = error.message;
     }
-    res.json(error);
+
+    res.json(message);
   }
 }
