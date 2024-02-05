@@ -40,8 +40,8 @@ class CustomerStore {
         mobile_no,
       ]);
       const sql2 =
-        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer WHERE email = ?";
-      const [rows] = await DB.execute(sql2, email);
+        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no, verified FROM customer WHERE email = ?";
+      const [rows] = await DB.execute(sql2, [email]);
       const result = rows as unknown as CustomerInfo[];
       const customerResult = result[0];
       return customerResult;
@@ -241,6 +241,21 @@ class CustomerStore {
       return false;
     } catch (error) {
       throw new Error("couldn't check if user is verified");
+    }
+  }
+  async getId(email: string): Promise<number | null> {
+    try {
+      const sql = "SELECT id FROM customer WHERE email = ?";
+      const [rows] = await DB.execute(sql, [email]);
+      const result = rows as { id: number }[];
+      if (result.length === 0) {
+        return null;
+      }
+      const id = result[0].id;
+      return id;
+    } catch (error) {
+      console.error(error);
+      throw new Error("error getting the id of user");
     }
   }
 }

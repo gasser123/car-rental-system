@@ -13,8 +13,8 @@ import { verifyAuthToken } from "../middlewares/jwtValidation";
 const userVerificationRoutes = (app: Application) => {
   app.get(
     "/activation",
-    checkExpired,
     searchToken,
+    checkExpired,
     checkVerified,
     activateAccount
   ); 

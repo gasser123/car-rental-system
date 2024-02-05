@@ -14,7 +14,7 @@ class UserVerificationStore {
       };
 
       const sql =
-        "INSERT INTO verification(customer_id, created_at, expires_at, hash) VALUES(?,?,?,?)";
+        "INSERT INTO verification(customer_id, created_at, expires_at, token) VALUES(?,?,?,?)";
       await DB.execute(sql, [
         verification.customer_id,
         verification.created_at,
@@ -41,12 +41,12 @@ class UserVerificationStore {
       };
 
       const sql =
-        "UPDATE verification SET created_at = ?, expires_at = ?, hash = ? WHERE customer_id =  )";
+        "UPDATE verification SET created_at = ?, expires_at = ?, token = ? WHERE customer_id = ?";
       await DB.execute(sql, [
-        verification.customer_id,
         verification.created_at,
         verification.expires_at,
         verification.token,
+        verification.customer_id,
       ]);
 
       const activationURL = `http://localhost:3000/activation?token=${token}`;

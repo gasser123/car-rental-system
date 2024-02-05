@@ -6,6 +6,7 @@ interface RequestObject extends Request {
   total_amount?: number;
   car_id?: number;
   user_email?: string;
+  reset_exists?: boolean;
 }
 
 export default RequestObject;

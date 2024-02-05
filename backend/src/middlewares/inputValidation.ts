@@ -94,16 +94,6 @@ export const validateCarInputs = (
 ) => {
   try {
     const {
-      validateColor,
-      validateCountry,
-      validateModel,
-      validatePlate,
-      validatePrice,
-      validateStatus,
-      validateURL,
-      validateYear,
-    } = carValidator;
-    const {
       plate_id,
       model,
       year,
@@ -113,14 +103,14 @@ export const validateCarInputs = (
       color,
       image_url,
     } = req.body;
-    const isValidColor = validateColor(color as unknown);
-    const isValidCountry = validateCountry(country as unknown);
-    const isValidModel = validateModel(model as unknown);
-    const isValidPlate = validatePlate(plate_id as unknown);
-    const isValidPrice = validatePrice(price_per_day as unknown);
-    const isValidStatus = validateStatus(status as unknown);
-    const isValidURL = validateURL(image_url as unknown);
-    const isValidYear = validateYear(year as unknown);
+    const isValidColor = carValidator.validateColor(color as unknown);
+    const isValidCountry = carValidator.validateCountry(country as unknown);
+    const isValidModel = carValidator.validateModel(model as unknown);
+    const isValidPlate = carValidator.validatePlate(plate_id as unknown);
+    const isValidPrice = carValidator.validatePrice(price_per_day as unknown);
+    const isValidStatus = carValidator.validateStatus(status as unknown);
+    const isValidURL = carValidator.validateURL(image_url as unknown);
+    const isValidYear = carValidator.validateYear(year as unknown);
     if (!isValidColor) {
       throw new Error("Invalid color");
     }
@@ -327,6 +317,37 @@ export const changePasswordValidate = async (
     if (!checkCurrentPassword) {
       throw new Error("invalid current password");
     }
+    if (!checkNewPassword) {
+      throw new Error("invalid new password");
+    }
+
+    if (!checkConfirmPassword) {
+      throw new Error("invalid confirm password");
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new Error("please confirm your password");
+    }
+    next();
+  } catch (error) {
+    let message= "";
+    if(error instanceof Error){
+      message = error.message; 
+    }
+    res.status(422);
+    res.json(message);
+  }
+};
+
+export const changePasswordResetValidate = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { newPassword, confirmPassword } = req.body;
+    const checkNewPassword = validator.validatePassword(newPassword);
+    const checkConfirmPassword = validator.validatePassword(confirmPassword);
     if (!checkNewPassword) {
       throw new Error("invalid new password");
     }

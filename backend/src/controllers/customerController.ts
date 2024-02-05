@@ -6,10 +6,11 @@ import { NextFunction, Request, Response } from "express";
 import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
 import { getCustomerReservations } from "../services/reservationServices";
+import Validator from "../utilities/Validator";
 dotenv.config();
 const { TOKEN_SECRET } = process.env;
 const store = new CustomerStore();
-
+const validator = new Validator();
 export const register = async (
   req: RequestObject,
   res: Response,
@@ -26,7 +27,7 @@ export const register = async (
     };
 
     const newCustomer = await store.createCustomer(customer);
-    if (!newCustomer.verified) {
+    if (newCustomer.verified !== 0) {
       throw new Error("couldn't obtain verification status");
     }
     const token = jwt.sign(
@@ -333,3 +334,64 @@ export async function advancedSearchCustomers(
     res.json(message);
   }
 }
+
+export async function passCustomerIdEmail(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.body.email as unknown;
+    const check = validator.validateEmail(value);
+    if (!check) {
+      throw new CustomError("invalid email address", 422);
+    }
+    const email = value as string;
+    const customer_id = await store.getId(email);
+    if (!customer_id) {
+      throw new CustomError("user email not found", 200);
+    }
+    req.user_email = email;
+    req.user_id = customer_id;
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+    res.json(message);
+  }
+}
+
+export const changePasswordReset = async (req: RequestObject, res: Response) => {
+  try {
+    const customer_id = req.user_id;
+    const { newPassword} = req.body;
+    if (!customer_id) {
+      throw new CustomError("couldn't verify user", 401);
+    }
+  
+      await store.updateCustomerPassword(
+        customer_id,
+        newPassword as unknown as string
+      );
+      res.status(200);
+      res.json("password changed successfully");
+     
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+};
