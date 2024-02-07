@@ -4,6 +4,7 @@ import {
   validateAdminEmail,
   validateLoginInputs,
   changePasswordValidate,
+  validateEditAdminSignup
 } from "../middlewares/inputValidation";
 import {
   register,
@@ -27,8 +28,7 @@ const adminRoutes = (app: Application) => {
   app.patch(
     "/admin/profile",
     verifyAdminToken,
-    validateAdminEmail,
-    validateAdminSignup,
+    validateEditAdminSignup,
     updateProfile
   );
   app.patch(

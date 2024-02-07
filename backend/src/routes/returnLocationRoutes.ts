@@ -7,6 +7,8 @@ import {
   addReturnLocation,
   editReturnLocation,
   removeReturnLocation,
+  checkLocationAlreadyExists,
+  checkEditLocationAlreadyExists
 } from "../controllers/returnLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
@@ -23,6 +25,7 @@ const returnLocationRoutes = (app: Application) => {
     "/returnlocations",
     verifyAdminToken,
     validateLocationInputs,
+    checkLocationAlreadyExists,
     addReturnLocation
   );
 
@@ -30,6 +33,7 @@ const returnLocationRoutes = (app: Application) => {
     "/returnlocations",
     verifyAdminToken,
     validateLocationInputs,
+    checkEditLocationAlreadyExists,
     editReturnLocation
   );
   app.delete("/returnlocations", verifyAdminToken, removeReturnLocation);

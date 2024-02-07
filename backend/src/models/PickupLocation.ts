@@ -103,9 +103,49 @@ class PickupLocationStore {
       return result;
     } catch (error) {
       console.error(error);
-      throw new Error(
-        `couldn't get do an advanced search on pickup locations`
-      );
+      throw new Error(`couldn't get do an advanced search on pickup locations`);
+    }
+  }
+  async locationAlreadyExists(location: PickupLocation): Promise<boolean> {
+    try {
+      const sql =
+        "SELECT * FROM pickup_location WHERE city = ? AND address = ? AND country = ?";
+      const [rows] = await DB.execute(sql, [
+        location.city,
+        location.address,
+        location.country,
+      ]);
+      const result = rows as PickupLocation[];
+      if (result.length === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if location already exists");
+    }
+  }
+  async editLocationAlreadyExists(location: PickupLocation): Promise<boolean> {
+    try {
+      if (!location.id) {
+        throw new Error("car id not found");
+      }
+      const sql =
+        "SELECT * FROM pickup_location WHERE city = ? AND address = ? AND country = ? AND id != ?";
+      const [rows] = await DB.execute(sql, [
+        location.city,
+        location.address,
+        location.country,
+        location.id,
+      ]);
+      const result = rows as PickupLocation[];
+      if (result.length === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if location already exists");
     }
   }
 }

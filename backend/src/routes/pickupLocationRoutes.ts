@@ -7,6 +7,8 @@ import {
   addPickupLocation,
   editPickupLocation,
   removePickupLocation,
+  checkLocationAlreadyExists,
+  checkEditLocationAlreadyExists
 } from "../controllers/pickupLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
@@ -23,6 +25,7 @@ const pickupLocationRoutes = (app: Application) => {
     "/pickuplocations",
     verifyAdminToken,
     validateLocationInputs,
+    checkLocationAlreadyExists,
     addPickupLocation
   );
 
@@ -30,6 +33,7 @@ const pickupLocationRoutes = (app: Application) => {
     "/pickuplocations",
     verifyAdminToken,
     validateLocationInputs,
+    checkEditLocationAlreadyExists,
     editPickupLocation
   );
   app.delete("/pickuplocations", verifyAdminToken, removePickupLocation);

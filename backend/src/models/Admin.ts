@@ -7,7 +7,7 @@ dotenv.config();
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
 export type AdminInfo = {
   id?: number;
-  email: string;
+  email?: string;
   first_name: string;
   last_name: string;
   role?: role;
@@ -112,10 +112,9 @@ class AdminStore {
 
   async updateAdminInfo(adminInfo: AdminInfo): Promise<void> {
     try {
-      const { id, first_name, last_name, email } = adminInfo;
-      const sql =
-        "UPDATE admin SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
-      await DB.execute(sql, [first_name, last_name, email, id]);
+      const { id, first_name, last_name } = adminInfo;
+      const sql = "UPDATE admin SET first_name = ?, last_name = ? WHERE id = ?";
+      await DB.execute(sql, [first_name, last_name, id]);
     } catch (error) {
       console.error(error);
       throw new Error(`couldn't update customer info`);

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import ReturnLocationStore from "../models/ReturnLocation";
 import CustomError from "../utilities/CustomError";
 import ReturnLocation from "../entities/returnLocationEntity";
@@ -150,6 +150,67 @@ export async function advancedSearchReturn(req: RequestObject, res: Response) {
     const search = searchValue as string;
     const locations = await store.advancedSearch(search);
     res.json(locations);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
+export async function checkLocationAlreadyExists(req: Request, res: Response, next: NextFunction){
+  try {
+   const location: ReturnLocation ={
+     country: req.body.country as string,
+     city: req.body.city as string,
+     address: req.body.address as string
+    }
+    const check = await store.locationAlreadyExists(location);
+    if(check){
+     throw new CustomError("location already exists", 200);
+    }
+    next();
+  } catch (error) {
+   let message = "";
+   if (error instanceof CustomError) {
+     res.status(error.status);
+     message = error.message;
+   } else if (error instanceof Error) {
+     res.status(500);
+     message = error.message;
+   }
+ 
+   res.json(message);
+  } 
+ }
+
+ export async function checkEditLocationAlreadyExists(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.id;
+    if (!value) {
+      throw new CustomError("pickup location id is missing", 422);
+    }
+    const location: ReturnLocation = {
+      id: parseInt(value as string),
+      country: req.body.country as string,
+      city: req.body.city as string,
+      address: req.body.address as string,
+    };
+    const check = await store.editLocationAlreadyExists(location);
+    if (check) {
+      throw new CustomError("location already exists", 200);
+    }
+    next();
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {

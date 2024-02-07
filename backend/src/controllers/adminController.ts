@@ -109,15 +109,8 @@ export async function updateProfile(req: RequestObject, res: Response) {
       id: admin_id,
       first_name: req.body.first_name as unknown as string,
       last_name: req.body.last_name as unknown as string,
-      email: req.body.email as unknown as string,
     };
-
-    const password = req.body.password as unknown as string;
-    const check = await store.confirmCurrentPassword(admin_id, password);
-    if (!check) {
-      throw new CustomError("wrong password", 200);
-    }
-
+   
     await store.updateAdminInfo(adminInfo);
     res.status(200);
     res.json("profile updated successfully");

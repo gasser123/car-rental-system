@@ -95,7 +95,9 @@ export function logout(req: Request, res: Response) {
     secure: false,
     httpOnly: true,
   });
-  res.redirect("http://localhost:8080/");
+  res.status(200);
+  res.json("logged out successfully");
+  //res.redirect("http://localhost:8080/");
 }
 
 export async function getProfile(req: RequestObject, res: Response) {
@@ -166,27 +168,13 @@ export async function updateProfile(req: RequestObject, res: Response) {
     if (!customer_id) {
       throw new CustomError("couldn't verify user", 401);
     }
-    const {
-      driver_license_no,
-      first_name,
-      last_name,
-      email,
-      mobile_no,
-      password,
-    } = req.body;
-    const check = await store.confirmCurrentPassword(
-      customer_id,
-      password as unknown as string
-    );
-    if (!check) {
-      throw new CustomError("wrong password", 200);
-    }
+    const { driver_license_no, first_name, last_name, mobile_no } = req.body;
+
     const customerInfo: CustomerInfo = {
       id: customer_id,
       driver_license_no: driver_license_no as unknown as string,
       first_name: first_name as unknown as string,
       last_name: last_name as unknown as string,
-      email: email as unknown as string,
       mobile_no: mobile_no as unknown as string,
     };
 
@@ -237,6 +225,8 @@ export async function activateAccount(req: RequestObject, res: Response) {
       throw new Error("couldn't activate account user credential is missing");
     }
     await store.verifyCustomer(id);
+    res.status(200);
+    res.json("account verified successfully");
   } catch (error) {
     let message = "";
     if (error instanceof Error) {
@@ -296,8 +286,9 @@ export async function checkVerified(
     if (check) {
       res.status(200);
       res.json("user account is already activated");
+    } else {
+      next();
     }
-    next();
   } catch (error) {
     let message = "";
     if (error instanceof Error) {
@@ -367,21 +358,23 @@ export async function passCustomerIdEmail(
   }
 }
 
-export const changePasswordReset = async (req: RequestObject, res: Response) => {
+export const changePasswordReset = async (
+  req: RequestObject,
+  res: Response
+) => {
   try {
     const customer_id = req.user_id;
-    const { newPassword} = req.body;
+    const { newPassword } = req.body;
     if (!customer_id) {
       throw new CustomError("couldn't verify user", 401);
     }
-  
-      await store.updateCustomerPassword(
-        customer_id,
-        newPassword as unknown as string
-      );
-      res.status(200);
-      res.json("password changed successfully");
-     
+
+    await store.updateCustomerPassword(
+      customer_id,
+      newPassword as unknown as string
+    );
+    res.status(200);
+    res.json("password changed successfully");
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {
@@ -395,3 +388,55 @@ export const changePasswordReset = async (req: RequestObject, res: Response) => 
     res.json(message);
   }
 };
+
+export async function checkConfirmCurrentPassword(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.body.currentPassword as unknown;
+    const checkCurrentPassword = validator.validatePassword(value);
+    if (!checkCurrentPassword) {
+      throw new CustomError("invalid password", 422);
+    }
+    const currentPassword = value as string;
+    const id = req.user_id;
+    if (!id) {
+      throw new Error("user credential not found");
+    }
+    const check = await store.confirmCurrentPassword(id, currentPassword);
+    if (!check) {
+      throw new CustomError("wrong password", 401);
+    }
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
+export async function editEmail(req: RequestObject, res: Response) {
+  try {
+    const id = req.user_id as number;
+    const email = req.body.email as string;
+    await store.updateEmail(id, email);
+    res.status(200);
+    res.json("email updated successfully");
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500);
+    res.json(message);
+  }
+}

@@ -9,7 +9,7 @@ export type CustomerInfo = {
   driver_license_no: string;
   first_name: string;
   last_name: string;
-  email: string;
+  email?: string;
   mobile_no: string;
   verified?: number;
 };
@@ -120,15 +120,14 @@ class CustomerStore {
 
   async updateCustomerInfo(customerInfo: CustomerInfo): Promise<void> {
     try {
-      const { id, driver_license_no, first_name, last_name, email, mobile_no } =
+      const { id, driver_license_no, first_name, last_name, mobile_no } =
         customerInfo;
       const sql =
-        "UPDATE customer SET driver_license_no = ?, first_name = ?, last_name = ?, email = ?, mobile_no = ? WHERE id = ?";
+        "UPDATE customer SET driver_license_no = ?, first_name = ?, last_name = ?, mobile_no = ? WHERE id = ?";
       await DB.execute(sql, [
         driver_license_no,
         first_name,
         last_name,
-        email,
         mobile_no,
         id,
       ]);
@@ -215,6 +214,58 @@ class CustomerStore {
     }
   }
 
+  async editEmailAlreadyExists(email: string, id: number): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM customer WHERE email = ? AND id != ?";
+      const [rows] = await DB.execute(sql, [email, id]);
+      const result = rows as unknown as Customer[];
+      if (result.length === 0) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if email already exists");
+    }
+  }
+
+  async licenseAlreadyExists(license: string): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM customer WHERE driver_license_no = ?";
+      const [rows] = await DB.execute(sql, [license]);
+      const result = rows as unknown as Customer[];
+      if (result.length === 0) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if email already exists");
+    }
+  }
+
+  async editLicenseAlreadyExists(customerInfo: CustomerInfo): Promise<boolean> {
+    try {
+      const sql =
+        "SELECT * FROM customer WHERE driver_license_no = ? AND id != ?";
+      const [rows] = await DB.execute(sql, [
+        customerInfo.driver_license_no,
+        customerInfo.id,
+      ]);
+      const result = rows as unknown as Customer[];
+      if (result.length === 0) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if email already exists");
+    }
+  }
+
   async verifyCustomer(id: number) {
     try {
       const sql = "UPDATE customer SET verified = ? WHERE id = ?";
@@ -258,5 +309,15 @@ class CustomerStore {
       throw new Error("error getting the id of user");
     }
   }
+  async updateEmail(id: number, email: string) {
+    try {
+      const sql = "UPDATE customer SET email = ? WHERE id = ?";
+      await DB.execute(sql, [email, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't update email");
+    }
+  }
 }
+
 export default CustomerStore;

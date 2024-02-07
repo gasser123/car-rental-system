@@ -117,8 +117,69 @@ export async function addCar(req: RequestObject, res: Response) {
   }
 }
 
+export async function checkPlateIdExists(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const plate_id = req.body.plate_id as string;
+    const check = await store.plateIdExists(plate_id);
+    if (check) {
+      throw new CustomError("plate id is already used", 200);
+    }
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(400);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
+export async function checkEditPlateIdExists(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.params.id;
+    if(!value){
+      throw new CustomError("id not found", 422);
+    }
+    const id = parseInt(value);
+    const plate_id = req.body.plate_id as string;
+    const check = await store.editPlateIdExists(plate_id, id);
+    if (check) {
+      throw new CustomError("plate id is already used", 200);
+    }
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(400);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
 export async function editCar(req: RequestObject, res: Response) {
   try {
+    const value = req.params.id;
+    if(!value){
+      throw new CustomError("id not found", 422);
+    }
     const car: Car = {
       id: parseInt(req.params.id as string),
       color: req.body.color as unknown as string,

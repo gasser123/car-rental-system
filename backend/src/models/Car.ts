@@ -225,5 +225,35 @@ class CarStore {
       throw new Error(`couldn't update car to rented`);
     }
   }
+
+  async plateIdExists(plate_id: string): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM car WHERE plate_id = ?";
+      const [rows] = await DB.execute(sql, [plate_id]);
+      const result = rows as Car[];
+      if (result.length === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if plate_id exists");
+    }
+  }
+
+  async editPlateIdExists(plate_id: string, id: number): Promise<boolean> {
+    try {
+      const sql = "SELECT * FROM car WHERE plate_id = ? AND id != ?";
+      const [rows] = await DB.execute(sql, [plate_id, id]);
+      const result = rows as Car[];
+      if (result.length === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't check if plate_id exists");
+    }
+  }
 }
 export default CarStore;

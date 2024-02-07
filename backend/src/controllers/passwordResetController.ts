@@ -25,13 +25,16 @@ export async function createReset(req: RequestObject, res: Response) {
     }
 
     const html = `<div>
-             <p>Click the link below to reset your password the link expires in one hour.</p>
-                </div>
-               <div> 
-                <a href=${activationURL} target="_blank">reset password</a>
-               </div>
-    
-               `;
+    <h3>Welcome ${email}</h3>
+    <p>
+    If you forgot your password you can reset it by clicking the button below the link expires in one hour.</p>
+       </div>
+      <div> 
+       <button style="border-radius: 25px;
+       padding: 10px 25px; background-color: blue;"><a href=${activationURL} target="_blank" style="color: white;  text-decoration: none;">Reset password</a></button>
+      </div>
+
+      `;
 
     res.on("finish", async () => {
       try {

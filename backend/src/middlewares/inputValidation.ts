@@ -6,6 +6,8 @@ import LocationValidator from "../utilities/LocationValidator";
 import isValidId from "../utilities/idValidate";
 import AdminStore from "../models/Admin";
 import RequestObject from "../entities/requestObject";
+import { CustomerInfo } from "../models/Customer";
+import CustomError from "../utilities/CustomError";
 const customerStore = new CustomerStore();
 const validator = new Validator();
 const carValidator = new CarValidator();
@@ -58,9 +60,49 @@ export const validateCustomerInputs = (
 
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(422);
+    res.json(message);
+  }
+};
+
+export const validateEditCustomerInputs = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { first_name, last_name, driver_license_no, mobile_no } = req.body;
+    const validateFirstName = validator.validateName(first_name as unknown);
+    const validateLastName = validator.validateName(last_name as unknown);
+    const validateLicense = validator.validateLicense(
+      driver_license_no as unknown
+    );
+    const validateMobileNo = validator.validateMobileNo(mobile_no as unknown);
+    if (!validateFirstName) {
+      throw new Error("invalid first name");
+    }
+
+    if (!validateLastName) {
+      throw new Error("invalid last name");
+    }
+
+    if (!validateLicense) {
+      throw new Error("invalid license number");
+    }
+
+    if (!validateMobileNo) {
+      throw new Error("invalid mobile number");
+    }
+
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -78,6 +120,97 @@ export const validateCustomerEmail = async (
     if (alreadyExists) {
       res.status(200);
       res.json("email is already used");
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500);
+    res.json("error checking email");
+  }
+};
+
+export const validateEditCustomerEmail = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = req.user_id;
+    if (!id) {
+      throw new Error("user credential is missing");
+    }
+    const value = req.body.email as unknown;
+    const validateEmail = validator.validateEmail(value);
+    if (!validateEmail) {
+      throw new CustomError("invalid email address", 422);
+    }
+    const email = value as string;
+    const alreadyExists = await customerStore.editEmailAlreadyExists(email, id);
+    if (alreadyExists) {
+      res.status(200);
+      res.json("email is already used");
+    } else {
+      next();
+    }
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+};
+
+export const checkLicenseAlreadyExists = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const license = req.body.driver_license_no as unknown as string;
+    const alreadyExists = await customerStore.licenseAlreadyExists(license);
+    if (alreadyExists) {
+      res.status(200);
+      res.json("license is already used");
+    } else {
+      next();
+    }
+  } catch (error) {
+    res.status(500);
+    res.json("error checking email");
+  }
+};
+
+export const checkEditLicenseAlreadyExists = async (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const customer_id = req.user_id;
+    if (!customer_id) {
+      throw new Error("couldn't verify user");
+    }
+    const { driver_license_no, first_name, last_name, mobile_no } = req.body;
+
+    const customerInfo: CustomerInfo = {
+      id: customer_id,
+      driver_license_no: driver_license_no as unknown as string,
+      first_name: first_name as unknown as string,
+      last_name: last_name as unknown as string,
+      mobile_no: mobile_no as unknown as string,
+    };
+    const alreadyExists = await customerStore.editLicenseAlreadyExists(
+      customerInfo
+    );
+    if (alreadyExists) {
+      res.status(200);
+      res.json("license is already used");
     } else {
       next();
     }
@@ -144,9 +277,9 @@ export const validateCarInputs = (
     }
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -180,9 +313,9 @@ export const validateLocationInputs = (
 
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -203,9 +336,9 @@ export const validateId = (
 
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -246,15 +379,44 @@ export const validateAdminSignup = (
 
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
   }
 };
 
+export const validateEditAdminSignup = (
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const first_name = req.body.first_name as unknown;
+    const last_name = req.body.last_name as unknown;
+    const isValidFirst_name = validator.validateName(first_name);
+    const isValidLast_name = validator.validateName(last_name);
+
+    if (!isValidFirst_name) {
+      throw new Error("invalid first name");
+    }
+
+    if (!isValidLast_name) {
+      throw new Error("invalid last name");
+    }
+
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(422);
+    res.json(message);
+  }
+};
 export const validateAdminEmail = async (
   req: RequestObject,
   res: Response,
@@ -295,9 +457,9 @@ export const validateLoginInputs = (
 
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -330,9 +492,9 @@ export const changePasswordValidate = async (
     }
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);
@@ -361,9 +523,9 @@ export const changePasswordResetValidate = async (
     }
     next();
   } catch (error) {
-    let message= "";
-    if(error instanceof Error){
-      message = error.message; 
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
     }
     res.status(422);
     res.json(message);

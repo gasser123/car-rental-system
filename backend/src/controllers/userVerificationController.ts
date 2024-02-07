@@ -13,10 +13,15 @@ export async function createActivation(req: RequestObject, res: Response) {
     }
     const activationURL = await store.createUserVerification(customer_id);
     const html = `<div>
-             <p>Click the link below to activate your account the link expires in two hours</p>
+              <h3>Welcome ${email}</h3>
+             <p>
+             Thank you for signing up for NodeCar.
+             <br>
+             Verify your email address by clicking the button below the link expires in two hours.</p>
                 </div>
                <div> 
-                <a href=${activationURL} target="_blank"> activate my account</a>
+                <button style="border-radius: 25px;
+                padding: 10px 25px; background-color: blue;"><a href=${activationURL} target="_blank" style="color: white;  text-decoration: none;"> Activate my account</a></button>
                </div>
     
                `;
@@ -53,13 +58,18 @@ export async function recreateActivation(req: RequestObject, res: Response) {
     }
     const activationURL = await store.updateUserVerification(customer_id);
     const html = `<div>
-                 <p>Click the link below to activate your account the link expires in two hours.</p>
-                    </div>
-                   <div> 
-                    <a href=${activationURL} target="_blank"> activate my account</a>
-                   </div>
-        
-                   `;
+    <h3>Welcome ${email}</h3>
+    <p>
+    Thank you for signing up for NodeCar.
+     <br>
+    Verify your email address by clicking the button below the link expires in two hours.</p>
+       </div>
+      <div> 
+       <button style="border-radius: 25px;
+       padding: 10px 25px; background-color: blue;"><a href=${activationURL} target="_blank" style="color: white;text-decoration: none;"> activate my account</a></button>
+      </div>
+
+      `;
 
     if (!email) {
       throw new Error("user email is missing");
@@ -132,10 +142,9 @@ export async function checkExpired(
     if (isExpired) {
       res.status(410);
       res.json("link expired");
-    } else{
+    } else {
       next();
     }
-    
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {
