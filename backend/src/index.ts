@@ -8,6 +8,7 @@ import pickupLocationRoutes from "./routes/pickupLocationRoutes";
 import returnLocationRoutes from "./routes/returnLocationRoutes";
 import userVerificationRoutes from "./routes/userVerificationRoutes";
 import reservationRoutes from "./routes/reservationRoutes";
+import passwordResetRoutes from "./routes/passwordResetRoutes";
 dotenv.config();
 const { SERVER_PORT } = process.env;
 const app = express();
@@ -20,6 +21,7 @@ pickupLocationRoutes(app);
 returnLocationRoutes(app);
 userVerificationRoutes(app);
 reservationRoutes(app);
+passwordResetRoutes(app);
 const port = parseInt(SERVER_PORT as unknown as string);
 app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);

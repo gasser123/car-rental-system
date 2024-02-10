@@ -60,9 +60,6 @@ export async function login(req: Request, res: Response) {
     const password = req.body.password as unknown as string;
     const customer = await store.authenticate(email, password);
     if (customer != null) {
-      if (!customer.verified) {
-        throw new Error("couldn't obtain verification status");
-      }
       const token = jwt.sign(
         { customer_id: customer.id, verified: customer.verified },
         TOKEN_SECRET as string,
@@ -97,7 +94,6 @@ export function logout(req: Request, res: Response) {
   });
   res.status(200);
   res.json("logged out successfully");
-  //res.redirect("http://localhost:8080/");
 }
 
 export async function getProfile(req: RequestObject, res: Response) {
@@ -225,6 +221,10 @@ export async function activateAccount(req: RequestObject, res: Response) {
       throw new Error("couldn't activate account user credential is missing");
     }
     await store.verifyCustomer(id);
+    res.clearCookie("token", {
+      secure: false,
+      httpOnly: true,
+    });
     res.status(200);
     res.json("account verified successfully");
   } catch (error) {

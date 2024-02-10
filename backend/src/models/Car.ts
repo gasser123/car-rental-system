@@ -255,5 +255,20 @@ class CarStore {
       throw new Error("couldn't check if plate_id exists");
     }
   }
+  async getCarCountry(id: number): Promise<string> {
+    try {
+      const sql = "SELECT * FROM car WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as Car[];
+      if (result.length === 0) {
+        throw new Error("car not found");
+      }
+      const car = result[0];
+      return car.country;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't fetch car country");
+    }
+  }
 }
 export default CarStore;

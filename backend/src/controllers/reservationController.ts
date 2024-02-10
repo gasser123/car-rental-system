@@ -18,13 +18,17 @@ export async function makeAReservation(
     if (!total_amount) {
       throw new CustomError("total amount isn't declared", 500);
     }
+    const car_id = req.query.car_id;
+    if (!car_id) {
+      throw new CustomError("car id is missing", 422);
+    }
     const reservation: Reservation = {
-      car_id: req.body.car_id as unknown as number,
+      car_id: parseInt(car_id as string),
       customer_id: customer_id,
-      pickup_date: req.body.pickup_date as unknown as string,
-      return_date: req.body.return_date as unknown as string,
-      pickup_location_id: req.body.pickup_location_id as unknown as number,
-      return_location_id: req.body.return_location_id,
+      pickup_date: req.query.pickup_date as string,
+      return_date: req.query.return_date as string,
+      pickup_location_id: parseInt(req.query.pickup_location_id as string),
+      return_location_id: parseInt(req.query.return_location_id as string),
       total_amount: total_amount,
     };
     await store.createReservation(reservation);
@@ -54,6 +58,28 @@ export async function showAllReservations(req: Request, res: Response) {
       message = error.message;
     }
     res.status(500);
+    res.json(message);
+  }
+}
+
+export async function confirmReservation(req: RequestObject, res: Response) {
+  try {
+    const value = req.params.id;
+    if (!value) {
+      throw new CustomError("reservation id is missing", 422);
+    }
+    const id = parseInt(value);
+    await store.updateConfirmReservation(id);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
     res.json(message);
   }
 }

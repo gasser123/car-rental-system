@@ -13,7 +13,7 @@ class ReservationStore {
         total_amount,
       } = reservation;
       const sql =
-        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, reservation_date,  pickup_date, return_date, total_amount) VALUES(?, ?, ?, ?, now(), ?, ?, ?)";
+        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, pickup_date, return_date, total_amount) VALUES(?, ?, ?, ?, ?, ?, ?)";
       await DB.execute(sql, [
         customer_id,
         car_id,
@@ -54,7 +54,15 @@ class ReservationStore {
     }
   }
 
-  
+  async updateConfirmReservation(id: number) {
+    try {
+      const sql = "UPDATE reservation SET confirmed = ? WHERE id = ?";
+      await DB.execute(sql, [1, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error("error confirming reservation");
+    }
+  }
 }
 
 export default ReservationStore;

@@ -224,3 +224,24 @@ export async function checkLocationAlreadyExists(req: Request, res: Response, ne
     res.json(message);
   }
 }
+
+export async function passReturnLocationCountry(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.return_location_id as string;
+    const return_location_id = parseInt(value);
+    const country = await store.getLocationCountry(return_location_id);
+    req.return_country = country;
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+    res.json(message);
+  }
+}

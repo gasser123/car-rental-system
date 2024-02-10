@@ -4,8 +4,9 @@ import {
   validateAdminEmail,
   validateLoginInputs,
   changePasswordValidate,
-  validateEditAdminSignup
+  validateEditAdminSignup,
 } from "../middlewares/inputValidation";
+import isRootAdmin from "../middlewares/rootAdmin";
 import {
   register,
   showAdmins,
@@ -19,9 +20,16 @@ import {
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 
 const adminRoutes = (app: Application) => {
-  app.post("/admin/admins", validateAdminSignup, validateAdminEmail, register);
-  app.get("/admin/admins", verifyAdminToken, showAdmins);
-  app.delete("/admin/admins/:id", verifyAdminToken, removeAdmin);
+  app.post(
+    "/admin/admins",
+    verifyAdminToken,
+    isRootAdmin,
+    validateAdminSignup,
+    validateAdminEmail,
+    register
+  );
+  app.get("/admin/admins", verifyAdminToken, isRootAdmin, showAdmins);
+  app.delete("/admin/admins/:id", verifyAdminToken, isRootAdmin,removeAdmin);
   app.post("/admin", validateLoginInputs, login);
   app.post("/logout", logout);
   app.get("/admin/profile", verifyAdminToken, getProfile);

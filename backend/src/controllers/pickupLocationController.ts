@@ -228,3 +228,24 @@ export async function checkEditLocationAlreadyExists(
     res.json(message);
   }
 }
+
+export async function passPickupLocationCountry(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.pickup_location_id as string;
+    const pickup_location_id = parseInt(value);
+    const country = await store.getLocationCountry(pickup_location_id);
+    req.pickup_country = country;
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+    res.json(message);
+  }
+}

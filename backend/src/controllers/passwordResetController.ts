@@ -38,7 +38,7 @@ export async function createReset(req: RequestObject, res: Response) {
 
     res.on("finish", async () => {
       try {
-        await sendMail(email, "Account activation", html);
+        await sendMail(email, "Password reset", html);
       } catch (error) {
         if (error instanceof Error) {
           console.error(error.message);

@@ -17,8 +17,8 @@ const carRoutes = (app: Application) => {
   app.get("/cars/countries", showAllCountries);
   app.post("/cars", verifyAdminToken, validateCarInputs, checkPlateIdExists,addCar);
   app.patch("/cars/:id", verifyAdminToken, validateCarInputs, checkEditPlateIdExists,editCar);
-  app.get("/admincars", verifyAdminToken, showAllCars);
-  app.get("/admincars/search", verifyAdminToken, advancedSearchCars);
+  app.get("/admin/cars", verifyAdminToken, showAllCars);
+  app.get("/admin/cars/search", verifyAdminToken, advancedSearchCars);
 };
 
 export default carRoutes;

@@ -8,5 +8,6 @@ interface Reservation {
   pickup_date: string;
   return_date: string;
   total_amount: number;
+  confirmed?: number;
 }
 export default Reservation;

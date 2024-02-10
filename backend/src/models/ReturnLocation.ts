@@ -144,5 +144,21 @@ class ReturnLocationStore {
       throw new Error("couldn't check if location already exists");
     }
   }
+
+  async getLocationCountry(id: number): Promise<string> {
+    try {
+      const sql = "SELECT * FROM return_location WHERE id = ?";
+      const [rows] = await DB.execute(sql, id);
+      const result = rows as ReturnLocation[];
+      if (result.length === 0) {
+        throw new Error("return location not found");
+      }
+      const location = result[0];
+      return location.country;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't fetch location country");
+    }
+  }
 }
 export default ReturnLocationStore;

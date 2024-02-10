@@ -150,7 +150,7 @@ export async function checkEditPlateIdExists(
 ) {
   try {
     const value = req.params.id;
-    if(!value){
+    if (!value) {
       throw new CustomError("id not found", 422);
     }
     const id = parseInt(value);
@@ -177,7 +177,7 @@ export async function checkEditPlateIdExists(
 export async function editCar(req: RequestObject, res: Response) {
   try {
     const value = req.params.id;
-    if(!value){
+    if (!value) {
       throw new CustomError("id not found", 422);
     }
     const car: Car = {
@@ -284,6 +284,27 @@ export async function advancedSearchCars(req: RequestObject, res: Response) {
       message = error.message;
     }
 
+    res.json(message);
+  }
+}
+
+export async function passCarCountry(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.car_id as string;
+    const car_id = parseInt(value);
+    const country = await store.getCarCountry(car_id);
+    req.car_country = country;
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
     res.json(message);
   }
 }

@@ -8,10 +8,12 @@ import AdminStore from "../models/Admin";
 import RequestObject from "../entities/requestObject";
 import { CustomerInfo } from "../models/Customer";
 import CustomError from "../utilities/CustomError";
+import ReservationValidator from "../utilities/ReservationValidator";
 const customerStore = new CustomerStore();
 const validator = new Validator();
 const carValidator = new CarValidator();
 const adminStore = new AdminStore();
+const reservationValidator = new ReservationValidator();
 export const validateCustomerInputs = (
   req: Request,
   res: Response,
@@ -466,7 +468,7 @@ export const validateLoginInputs = (
   }
 };
 
-export const changePasswordValidate = async (
+export const changePasswordValidate = (
   req: RequestObject,
   res: Response,
   next: NextFunction
@@ -501,7 +503,7 @@ export const changePasswordValidate = async (
   }
 };
 
-export const changePasswordResetValidate = async (
+export const changePasswordResetValidate = (
   req: RequestObject,
   res: Response,
   next: NextFunction
@@ -531,3 +533,82 @@ export const changePasswordResetValidate = async (
     res.json(message);
   }
 };
+
+export function validateReservationInputs(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const value = req.query.car_id;
+    if (!value) {
+      throw new CustomError("car id is missing", 422);
+    }
+    const value1 = req.query.pickup_location_id;
+    if (!value1) {
+      throw new CustomError("pickup location id is missing", 422);
+    }
+
+    const value2 = req.query.return_location_id;
+    if (!value2) {
+      throw new CustomError("return location id is missing", 422);
+    }
+    const value3 = req.query.pickup_date;
+    if (!value3) {
+      throw new CustomError("pickup date is missing", 422);
+    }
+
+    const value4 = req.query.return_date;
+    if (!value4) {
+      throw new CustomError("return date is missing", 422);
+    }
+    const car_id = parseInt(value as string);
+    const pickup_date = req.query.pickup_date;
+    const return_date = req.query.return_date;
+    const pickup_location_id = parseInt(req.query.pickup_location_id as string);
+    const return_location_id = parseInt(req.query.return_location_id as string);
+
+    const validateCarId = reservationValidator.validateId(car_id);
+    const validatePickupLocation =
+      reservationValidator.validateId(pickup_location_id);
+    const validateReturnLocation =
+      reservationValidator.validateId(return_location_id);
+    const validatePickupDate = reservationValidator.validateDate(pickup_date);
+    const validateReturnDate = reservationValidator.validateDate(return_date);
+
+    if (!validateCarId) {
+      throw new Error("invalid car id");
+    }
+
+    if (!validatePickupLocation) {
+      throw new Error("invalid pickup location");
+    }
+
+    if (!validateReturnLocation) {
+      throw new Error("invalid return location");
+    }
+
+    if (!validatePickupDate) {
+      throw new Error("invalid pickup date");
+    }
+
+    if (!validateReturnDate) {
+      throw new Error("invalid return date");
+    }
+    const validateDates = reservationValidator.validatePickupReturnDates(
+      pickup_date as string,
+      return_date as string
+    );
+    if (!validateDates) {
+      throw new Error("invalid dates");
+    }
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(422);
+    res.json(message);
+  }
+}

@@ -22,8 +22,9 @@ export const verifyAuthToken = (
       token,
       TOKEN_SECRET as unknown as string
     ) as CustomerPayload;
-    const { customer_id } = payLoad;
+    const { customer_id, verified } = payLoad;
     req.user_id = customer_id;
+    req.verified = verified;
     next();
   } catch (error) {
     res.status(401);

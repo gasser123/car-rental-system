@@ -7,6 +7,10 @@ interface RequestObject extends Request {
   car_id?: number;
   user_email?: string;
   reset_exists?: boolean;
+  verified?: number;
+  car_country?: string;
+  pickup_country?: string;
+  return_country?: string;
 }
 
 export default RequestObject;

@@ -173,7 +173,7 @@ export async function removeAdmin(req: RequestObject, res: Response) {
     }
 
     if (role !== "root_admin") {
-      throw new CustomError("unauthorized", 401);
+      throw new CustomError("unauthorized", 403);
     }
 
     await store.deleteAdmin(adminId);
@@ -198,7 +198,7 @@ export async function showAdmins(req: RequestObject, res: Response) {
       throw new CustomError("couldn't verify admin", 401);
     }
     if (role !== "root_admin") {
-      throw new CustomError("unauthorized", 401);
+      throw new CustomError("unauthorized", 403);
     }
 
     const adminsInfo = await store.getAllAdmins();
