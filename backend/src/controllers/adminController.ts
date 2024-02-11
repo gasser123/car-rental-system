@@ -177,6 +177,8 @@ export async function removeAdmin(req: RequestObject, res: Response) {
     }
 
     await store.deleteAdmin(adminId);
+    res.status(200);
+    res.json("deleted successfully");
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {

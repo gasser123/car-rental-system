@@ -31,7 +31,7 @@ const adminRoutes = (app: Application) => {
   app.get("/admin/admins", verifyAdminToken, isRootAdmin, showAdmins);
   app.delete("/admin/admins/:id", verifyAdminToken, isRootAdmin,removeAdmin);
   app.post("/admin", validateLoginInputs, login);
-  app.post("/logout", logout);
+  app.post("/admin/logout", logout);
   app.get("/admin/profile", verifyAdminToken, getProfile);
   app.patch(
     "/admin/profile",

@@ -25,7 +25,7 @@ class AdminStore {
       await DB.execute(sql, [email, hash, first_name, last_name, role]);
       const sql2 =
         "SELECT id, first_name, last_name, email, role FROM admin WHERE email = ?";
-      const [rows] = await DB.execute(sql2, email);
+      const [rows] = await DB.execute(sql2, [email]);
       const result = rows as unknown as AdminInfo[];
       const adminResult = result[0];
       return adminResult;
@@ -80,7 +80,7 @@ class AdminStore {
 
   async getAllAdmins(): Promise<AdminInfo[] | null> {
     try {
-      const sql = "SELECT id, email, first_name, last_name, role FROM admin";
+      const sql = "SELECT id, email, first_name, last_name, role FROM admin WHERE role != 'root_admin'";
       const [rows] = await DB.execute(sql);
       const result = rows as unknown as AdminInfo[];
       if (result.length === 0) {
