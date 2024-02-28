@@ -1,0 +1,52 @@
+.header {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  width: auto;
+  background-color: #070f2b;
+  height: 3rem;
+}
+.header h1 {
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  display: flex;
+}
+.header h1 a {
+  text-decoration: none;
+  color: #097509;
+  display: flex;
+}
+
+.header h1 a:active,
+.header h1 a:hover {
+  color: #097509;
+}
+
+.header h1 a img{
+  height: 2rem;
+  width: 2rem;
+  margin-right: 0.7rem;
+  margin-top: 0.5rem;
+  filter: invert(19%) sepia(94%) saturate(4486%) hue-rotate(101deg) brightness(92%) contrast(93%);
+ }
+nav {
+  width: auto;
+}
+.list {
+  display: flex;
+  width: auto;
+  gap: 1rem;
+  list-style: none;
+  justify-content: flex-end;
+}
+
+.list a {
+  text-decoration: none;
+  margin-right: 0.5rem;
+  color: whitesmoke;
+}
+
+.list a:hover,
+.list a.active {
+  color: var(--color-primary-800);
+}
