@@ -74,7 +74,12 @@ export function logout(req: Request, res: Response) {
     secure: false,
     httpOnly: true,
   });
-  res.redirect("http://localhost:8080/");
+  res.clearCookie("logged", {
+    secure: false,
+    httpOnly: false,
+  });
+  res.status(200);
+  res.json("logged out successfully");
 }
 
 export async function getProfile(req: RequestObject, res: Response) {
