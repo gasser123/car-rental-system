@@ -48,6 +48,11 @@ export async function login(req: Request, res: Response) {
         secure: false, // set to true if you're using https
         httpOnly: true,
       });
+      res.cookie("logged", "admin", {
+        expires: new Date(Date.now() + expiration_time), // time until expiration
+        secure: false, // set to true if you're using https
+        httpOnly: false,
+      });
 
       res.status(200).json("logged in successfully");
     } else {

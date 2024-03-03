@@ -41,6 +41,12 @@ export const register = async (
       secure: false, // set to true if you're using https
       httpOnly: true,
     });
+
+    res.cookie("logged", "customer", {
+      expires: new Date(Date.now() + expiration_time), // time until expiration
+      secure: false, // set to true if you're using https
+      httpOnly: false,
+    });
     req.user_id = newCustomer.id;
     req.user_email = newCustomer.email;
     next();
@@ -71,7 +77,12 @@ export async function login(req: Request, res: Response) {
         secure: false, // set to true if you're using https
         httpOnly: true,
       });
-
+      
+      res.cookie("logged", "customer", {
+        expires: new Date(Date.now() + expiration_time), // time until expiration
+        secure: false, // set to true if you're using https
+        httpOnly: false,
+      });
       res.status(200).json("logged in successfully");
     } else {
       res.status(200);
@@ -92,6 +103,10 @@ export function logout(req: Request, res: Response) {
     secure: false,
     httpOnly: true,
   });
+  res.clearCookie("logged", {
+    secure: false,
+    httpOnly: false,
+  });
   res.status(200);
   res.json("logged out successfully");
 }
@@ -107,6 +122,7 @@ export async function getProfile(req: RequestObject, res: Response) {
     if (!customerInfo) {
       throw new CustomError("invalid token info", 401);
     }
+    res.status(200);
     res.json(customerInfo);
   } catch (error) {
     res.clearCookie("token", {

@@ -44,6 +44,7 @@
   border-radius: 0.3rem;
   width: 100%;
   height: 50%;
+  font-size: 0.9rem;
 }
 
 .card label {
@@ -55,13 +56,13 @@
   cursor: pointer;
   padding: 0.5rem 0.5rem;
   width: 14%;
-  height: 80%;
+  height: fit-content;
   margin-top: 1.1rem;
   border-radius: 0.5rem;
   background-color: #097509;
   border: 5px solid #097509;
   color: whitesmoke;
-  font-size: medium;
+  font-size: 1rem;
 }
 
 .action:hover {
@@ -72,7 +73,7 @@
 
 .locations-list {
   background-color: white;
-  z-index: 200;
+  z-index: 5;
   max-height: 30vh;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -98,4 +99,67 @@
   margin-right: 0.7rem;
   filter: invert(18%) sepia(63%) saturate(5270%) hue-rotate(356deg)
     brightness(90%) contrast(95%);
+}
+
+@media screen and (max-width: 899px) {
+  .card {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+  }
+  .form-container {
+    height: fit-content;
+  }
+  .wrapper {
+    height: fit-content;
+    width: 100%;
+    padding: 3% 0;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-top: 1rem;
+    position: relative;
+  }
+
+  .action {
+    width: 40%;
+  }
+
+  .locations-list {
+    background-color: white;
+    z-index: 200;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    position: absolute;
+    max-height: 30vh;
+    top: 100%;
+    left: 0;
+  }
+
+  .form-container h3 {
+    color: #de1d10;
+    text-align: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .input-group input,
+  .input-group select {
+  font-size: 1.2rem;
+}
+
+.card label {
+  font-size: 1.5rem;
+}
+
+.action{
+  font-size: 1.2rem;
+}
+
+.location-item{
+ font-size: 1.2rem; 
+}
+
 }

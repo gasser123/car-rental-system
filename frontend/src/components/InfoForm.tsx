@@ -50,11 +50,16 @@ function InfoForm() {
 
   const filterPickupResults = (value: string): PickupLocation[] | null => {
     if (pickupLocations) {
+      const countryValue = countryRef.current?.value;
+      if (countryValue === undefined) {
+        return null;
+      }
       const results = pickupLocations.filter(
         (element) =>
-          element.address.toLowerCase().includes(value.toLowerCase()) ||
-          element.city.toLowerCase().includes(value.toLowerCase()) ||
-          element.country.toLowerCase().includes(value.toLowerCase())
+          element.country.toLowerCase() === countryValue.toLowerCase() &&
+          (element.address.toLowerCase().includes(value.toLowerCase()) ||
+            element.city.toLowerCase().includes(value.toLowerCase()) ||
+            element.country.toLowerCase().includes(value.toLowerCase()))
       );
 
       if (results.length === 0) {
@@ -67,11 +72,16 @@ function InfoForm() {
 
   const filterReturnResults = (value: string): PickupLocation[] | null => {
     if (returnLocations) {
+      const countryValue = countryRef.current?.value;
+      if (countryValue === undefined) {
+        return null;
+      }
       const results = returnLocations.filter(
         (element) =>
-          element.address.toLowerCase().includes(value.toLowerCase()) ||
-          element.city.toLowerCase().includes(value.toLowerCase()) ||
-          element.country.toLowerCase().includes(value.toLowerCase())
+          element.country.toLowerCase() === countryValue.toLowerCase() &&
+          (element.address.toLowerCase().includes(value.toLowerCase()) ||
+            element.city.toLowerCase().includes(value.toLowerCase()) ||
+            element.country.toLowerCase().includes(value.toLowerCase()))
       );
       if (results.length === 0) {
         return null;
@@ -85,9 +95,25 @@ function InfoForm() {
     event
   ) => {
     if (event.currentTarget.id === "pickupLocation") {
-      setPickupLocationsState(pickupLocations);
+      const countryValue = countryRef.current?.value;
+      if (countryValue === undefined) {
+        return;
+      }
+      const locations = pickupLocations.filter(
+        (element) =>
+          element.country.toLowerCase() === countryValue.toLowerCase()
+      );
+      setPickupLocationsState(locations);
     } else if (event.currentTarget.id === "returnLocation") {
-      setReturnLocationsState(returnLocations);
+      const countryValue = countryRef.current?.value;
+      if (countryValue === undefined) {
+        return;
+      }
+      const locations = returnLocations.filter(
+        (element) =>
+          element.country.toLowerCase() === countryValue.toLowerCase()
+      );
+      setReturnLocationsState(locations);
     }
   };
 

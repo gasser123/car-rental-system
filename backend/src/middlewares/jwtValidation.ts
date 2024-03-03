@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Response, Request } from "express";
 import RequestObject from "../entities/requestObject";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -32,6 +32,10 @@ export const verifyAuthToken = (
       secure: false,
       httpOnly: true,
     });
+    res.clearCookie("logged", {
+      secure: false,
+      httpOnly: false,
+    });
     res.json("erroring verifying token");
   }
 };
@@ -61,8 +65,54 @@ export const verifyAdminToken = (
       secure: false,
       httpOnly: true,
     });
+    res.clearCookie("logged", {
+      secure: false,
+      httpOnly: false,
+    });
     res.json("erroring verifying token");
   }
 };
 
+export const verifyCustomerLoggedIn = (req: Request, res: Response): void => {
+  try {
+    const token = req.cookies.token || "";
+    if (!token) {
+      throw new Error("no token found");
+    }
+    // if invalid it throws an error
+    jwt.verify(token, TOKEN_SECRET as unknown as string);
 
+    res.status(200);
+    res.json("customer is logged in");
+  } catch (error) {
+    res.status(401);
+    res.clearCookie("token", {
+      secure: false,
+      httpOnly: true,
+    });
+    res.json("erroring verifying token");
+  }
+};
+
+export const verifyAdminLogggedIn = (
+  req: RequestObject,
+  res: Response
+): void => {
+  try {
+    const token = req.cookies.token || "";
+    if (!token) {
+      throw new Error("no token found");
+    }
+    // if invalid it throws an error
+    jwt.verify(token, ADMIN_TOKEN_SECRET as string);
+    res.status(200);
+    res.json("admin is logged in");
+  } catch (error) {
+    res.status(401);
+    res.clearCookie("token", {
+      secure: false,
+      httpOnly: true,
+    });
+    res.json("erroring verifying token");
+  }
+};

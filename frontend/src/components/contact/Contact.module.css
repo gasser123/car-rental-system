@@ -1,3 +1,9 @@
 .contact{
  margin-left: 2rem;   
 }
+
+@media screen and (max-width: 899px) {
+ .contact p{
+   font-size: 1.2rem; 
+ }   
+}

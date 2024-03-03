@@ -13,6 +13,7 @@ import { createActivation } from "../controllers/userVerificationController";
 import {
   verifyAuthToken,
   verifyAdminToken,
+  verifyCustomerLoggedIn,
 } from "../middlewares/jwtValidation";
 import {
   register,
@@ -61,6 +62,7 @@ const customerRoutes = (app: express.Application) => {
 
   app.get("/history", verifyAuthToken, showCustomerReservations);
   app.get("/customers", verifyAdminToken, advancedSearchCustomers);
+  app.get("/logged", verifyCustomerLoggedIn);
 };
 
 export default customerRoutes;

@@ -17,7 +17,10 @@ import {
   updateProfile,
   changePassword,
 } from "../controllers/adminController";
-import { verifyAdminToken } from "../middlewares/jwtValidation";
+import {
+  verifyAdminLogggedIn,
+  verifyAdminToken,
+} from "../middlewares/jwtValidation";
 
 const adminRoutes = (app: Application) => {
   app.post(
@@ -29,7 +32,7 @@ const adminRoutes = (app: Application) => {
     register
   );
   app.get("/admin/admins", verifyAdminToken, isRootAdmin, showAdmins);
-  app.delete("/admin/admins/:id", verifyAdminToken, isRootAdmin,removeAdmin);
+  app.delete("/admin/admins/:id", verifyAdminToken, isRootAdmin, removeAdmin);
   app.post("/admin", validateLoginInputs, login);
   app.post("/admin/logout", logout);
   app.get("/admin/profile", verifyAdminToken, getProfile);
@@ -45,6 +48,8 @@ const adminRoutes = (app: Application) => {
     changePasswordValidate,
     changePassword
   );
+
+  app.get("/admin/logged", verifyAdminLogggedIn);
 };
 
 export default adminRoutes;
