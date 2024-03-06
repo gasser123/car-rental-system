@@ -318,6 +318,16 @@ class CustomerStore {
       throw new Error("couldn't update email");
     }
   }
+
+  async unVerifyCustomer(id: number){
+    try {
+      const sql = "UPDATE customer SET verified = ? WHERE id = ?";
+      await DB.execute(sql, [0, id]);
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't unVerify user account");
+    }
+  }
 }
 
 export default CustomerStore;

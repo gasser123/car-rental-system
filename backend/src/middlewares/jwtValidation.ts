@@ -28,14 +28,6 @@ export const verifyAuthToken = (
     next();
   } catch (error) {
     res.status(401);
-    res.clearCookie("token", {
-      secure: false,
-      httpOnly: true,
-    });
-    res.clearCookie("logged", {
-      secure: false,
-      httpOnly: false,
-    });
     res.json("erroring verifying token");
   }
 };
@@ -61,14 +53,6 @@ export const verifyAdminToken = (
     next();
   } catch (error) {
     res.status(401);
-    res.clearCookie("token", {
-      secure: false,
-      httpOnly: true,
-    });
-    res.clearCookie("logged", {
-      secure: false,
-      httpOnly: false,
-    });
     res.json("erroring verifying token");
   }
 };

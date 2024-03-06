@@ -147,7 +147,7 @@ export const validateEditCustomerEmail = async (
       throw new CustomError("invalid email address", 422);
     }
     const email = value as string;
-    const alreadyExists = await customerStore.editEmailAlreadyExists(email, id);
+    const alreadyExists = await customerStore.emailAlreadyExists(email);
     if (alreadyExists) {
       res.status(200);
       res.json("email is already used");

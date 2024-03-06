@@ -95,6 +95,63 @@ export async function recreateActivation(req: RequestObject, res: Response) {
   }
 }
 
+export async function eidtEmailRecreateActivation(
+  req: RequestObject,
+  res: Response
+) {
+  try {
+    const customer_id = req.user_id;
+    const email = req.user_email;
+    if (!customer_id) {
+      throw new Error("user identifier is not specified for activation");
+    }
+    const activationURL = await store.updateUserVerification(customer_id);
+    const html = `<div>
+    <h3>Welcome ${email}</h3>
+    <p>
+    Thank you for signing up for NodeCar.
+     <br>
+    Verify your email address by clicking the button below the link expires in two hours.</p>
+       </div>
+      <div> 
+       <button style="border-radius: 25px;
+       padding: 10px 25px; background-color: blue;"><a href=${activationURL} target="_blank" style="color: white;text-decoration: none;"> activate my account</a></button>
+      </div>
+
+      `;
+
+    if (!email) {
+      throw new Error("user email is missing");
+    }
+    res.on("finish", async () => {
+      try {
+        await sendMail(email, "Account activation", html);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    });
+    res.status(200);
+    res.clearCookie("token", {
+      secure: false,
+      httpOnly: true,
+    });
+    res.clearCookie("logged", {
+      secure: false,
+      httpOnly: false,
+    });
+    res.json("email is being sent");
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500);
+    res.json(message);
+  }
+}
+
 export async function searchToken(
   req: RequestObject,
   res: Response,

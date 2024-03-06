@@ -13,13 +13,9 @@ function isRootAdmin(req: RequestObject, res: Response, next: NextFunction) {
     next();
   } catch (error) {
     let message = "";
-    if (error instanceof CustomError) {
-      res.status(error.status);
-      message = error.message;
-    } else if (error instanceof Error) {
-      res.status(500);
-      message = error.message;
-    }
+    const myError = error as CustomError;
+    res.status(myError.status);
+    message = myError.message;
 
     res.json(message);
   }

@@ -22,7 +22,7 @@ class UserVerificationStore {
         verification.token,
       ]);
 
-      const activationURL = `http://localhost:3000/activation?token=${token}`;
+      const activationURL = `http://localhost:8080/activation?token=${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);
@@ -49,7 +49,7 @@ class UserVerificationStore {
         verification.customer_id,
       ]);
 
-      const activationURL = `http://localhost:3000/activation?token=${token}`;
+      const activationURL = `http://localhost:8080/activation?token=${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);

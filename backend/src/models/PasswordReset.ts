@@ -22,7 +22,7 @@ class PasswordResetStore {
         passwordReset.token,
       ]);
 
-      const activationURL = `http://localhost:3000/reset/${token}`;
+      const activationURL = `http://localhost:8080/reset/${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);
@@ -49,7 +49,7 @@ class PasswordResetStore {
         passwordReset.customer_id,
       ]);
 
-      const activationURL = `http://localhost:3000/reset/${token}`;
+      const activationURL = `http://localhost:8080/reset/${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);

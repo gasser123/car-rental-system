@@ -9,7 +9,7 @@ import {
   checkEditLicenseAlreadyExists,
   validateEditCustomerEmail,
 } from "../middlewares/inputValidation";
-import { createActivation } from "../controllers/userVerificationController";
+import { createActivation, eidtEmailRecreateActivation } from "../controllers/userVerificationController";
 import {
   verifyAuthToken,
   verifyAdminToken,
@@ -23,9 +23,10 @@ import {
   changePassword,
   updateProfile,
   showCustomerReservations,
-  advancedSearchCustomers,
+  showCustomers,
   checkConfirmCurrentPassword,
   editEmail,
+  unVerifyAccount
 } from "../controllers/customerController";
 const customerRoutes = (app: express.Application) => {
   app.post(
@@ -40,7 +41,7 @@ const customerRoutes = (app: express.Application) => {
   app.post("/logout", logout);
   app.get("/profile", verifyAuthToken, getProfile);
   app.patch(
-    "/editpassword",
+    "/changepassword",
     verifyAuthToken,
     changePasswordValidate,
     changePassword
@@ -57,11 +58,13 @@ const customerRoutes = (app: express.Application) => {
     verifyAuthToken,
     checkConfirmCurrentPassword,
     validateEditCustomerEmail,
-    editEmail
+    editEmail,
+    unVerifyAccount,
+    eidtEmailRecreateActivation
   );
 
   app.get("/history", verifyAuthToken, showCustomerReservations);
-  app.get("/customers", verifyAdminToken, advancedSearchCustomers);
+  app.get("/customers", verifyAdminToken, showCustomers);
   app.get("/logged", verifyCustomerLoggedIn);
 };
 

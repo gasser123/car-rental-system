@@ -77,7 +77,7 @@ export async function login(req: Request, res: Response) {
         secure: false, // set to true if you're using https
         httpOnly: true,
       });
-      
+
       res.cookie("logged", "customer", {
         expires: new Date(Date.now() + expiration_time), // time until expiration
         secure: false, // set to true if you're using https
@@ -156,6 +156,14 @@ export const changePassword = async (req: RequestObject, res: Response) => {
         newPassword as unknown as string
       );
       res.status(200);
+      res.clearCookie("token", {
+        secure: false,
+        httpOnly: true,
+      });
+      res.clearCookie("logged", {
+        secure: false,
+        httpOnly: false,
+      });
       res.json("password changed successfully");
     } else {
       throw new CustomError("wrong current password", 200);
@@ -315,17 +323,20 @@ export async function checkVerified(
   }
 }
 
-export async function advancedSearchCustomers(
+export async function showCustomers(
   req: RequestObject,
   res: Response
 ) {
   try {
     const value = req.query.search;
-    if (!value) {
-      throw new CustomError("search query is missing", 422);
+    let customersInfo: CustomerInfo[] | null;
+    if(value === undefined){
+      customersInfo = await store.getAllCustomers();
+    }else{
+      const search = value as string;
+      customersInfo = await store.advancedSearch(search);
     }
-    const search = value as string;
-    const customersInfo = await store.advancedSearch(search);
+    
     res.status(200);
     res.json(customersInfo);
   } catch (error) {
@@ -440,19 +451,49 @@ export async function checkConfirmCurrentPassword(
   }
 }
 
-export async function editEmail(req: RequestObject, res: Response) {
+export async function editEmail(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const id = req.user_id as number;
     const email = req.body.email as string;
     await store.updateEmail(id, email);
-    res.status(200);
-    res.json("email updated successfully");
+    req.user_email = email;
+    next();
   } catch (error) {
     let message = "";
     if (error instanceof Error) {
       message = error.message;
     }
     res.status(500);
+    res.json(message);
+  }
+}
+
+export async function unVerifyAccount(
+  req: RequestObject,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = req.user_id;
+    if (!id) {
+      throw new CustomError("user is not authenticated", 401);
+    }
+    await store.unVerifyCustomer(id);
+    next();
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
     res.json(message);
   }
 }

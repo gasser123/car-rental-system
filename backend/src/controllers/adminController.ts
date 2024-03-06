@@ -156,6 +156,14 @@ export const changePassword = async (req: RequestObject, res: Response) => {
         newPassword as unknown as string
       );
       res.status(200);
+      res.clearCookie("token", {
+        secure: false,
+        httpOnly: true,
+      });
+      res.clearCookie("logged", {
+        secure: false,
+        httpOnly: false,
+      });
       res.json("password changed successfully");
     } else {
       throw new CustomError("wrong current password", 200);
