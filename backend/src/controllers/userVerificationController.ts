@@ -95,7 +95,7 @@ export async function recreateActivation(req: RequestObject, res: Response) {
   }
 }
 
-export async function eidtEmailRecreateActivation(
+export async function editEmailRecreateActivation(
   req: RequestObject,
   res: Response
 ) {

@@ -9,7 +9,7 @@ import {
   checkEditLicenseAlreadyExists,
   validateEditCustomerEmail,
 } from "../middlewares/inputValidation";
-import { createActivation, eidtEmailRecreateActivation } from "../controllers/userVerificationController";
+import { createActivation, editEmailRecreateActivation } from "../controllers/userVerificationController";
 import {
   verifyAuthToken,
   verifyAdminToken,
@@ -60,7 +60,7 @@ const customerRoutes = (app: express.Application) => {
     validateEditCustomerEmail,
     editEmail,
     unVerifyAccount,
-    eidtEmailRecreateActivation
+    editEmailRecreateActivation
   );
 
   app.get("/history", verifyAuthToken, showCustomerReservations);
