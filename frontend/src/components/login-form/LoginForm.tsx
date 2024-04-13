@@ -2,8 +2,13 @@ import Modal from "../UI/Modal";
 import classes from "./LoginForm.module.css";
 import Validator from "../../validations/Validator";
 import { useState, useRef } from "react";
+import circleXmark from "../../assets/circle-xmark-solid.svg";
+import LoggedContext from "../../store/logged-context";
+import { useContext } from "react";
+import Spinner from "../UI/Spinner";
 interface Props {
   onHideModal: React.MouseEventHandler<HTMLDivElement>;
+  onHideModalfunc: () => void;
   children?: React.ReactNode;
 }
 
@@ -12,12 +17,19 @@ const LoginForm: React.FC<Props> = (props) => {
   const [passwordInputError, setPasswordInputError] = useState<string | null>(
     null
   );
+  const [otherError, setOtherError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loggedContextValue = useContext(LoggedContext);
   const validator = new Validator();
-  const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
+  const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
     event.preventDefault();
+    if (otherError !== null) {
+      setOtherError(null);
+    }
     const emailValue = emailRef.current?.value;
     const emailValidate = validator.validateEmail(emailValue);
     if (!emailValidate) {
@@ -31,6 +43,37 @@ const LoginForm: React.FC<Props> = (props) => {
         - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number
         - Can contain special characters`);
     }
+
+    if (!emailValidate || !passwordValidate) {
+      return;
+    }
+    const inputData = {
+      email: emailValue as string,
+      password: passwordValue as string,
+    };
+    setIsLoading(true);
+    const response = await fetch("http://localhost:8080/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(inputData),
+    });
+
+    setIsLoading(false);
+    const result = await response.json();
+    if (!response.ok) {
+      setOtherError(result);
+      return;
+    }
+    if (result === "invalid email or password") {
+      setOtherError(result);
+      return;
+    }
+    loggedContextValue.UpdateLogged("customer");
+    props.onHideModalfunc();
   };
 
   const inputOnChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
@@ -58,6 +101,12 @@ const LoginForm: React.FC<Props> = (props) => {
     <Modal onHideModal={props.onHideModal}>
       <form className={classes["login-form"]} onSubmit={onSubmitHandler}>
         <h2>Sign in</h2>
+        {otherError ? (
+          <h3>
+            <img src={circleXmark} alt="wrong" />
+            {otherError}
+          </h3>
+        ) : null}
         <div className={classes["input-group"]}>
           <label>Email</label>
           <input
@@ -80,8 +129,8 @@ const LoginForm: React.FC<Props> = (props) => {
           />
           {passwordError}
         </div>
-        <button type="submit" className={classes.action}>
-          Login
+        <button type="submit" className={classes.action} disabled={isLoading}>
+          {isLoading ? <Spinner /> : "Login"}
         </button>
       </form>
     </Modal>

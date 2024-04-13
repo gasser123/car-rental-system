@@ -60,3 +60,16 @@
   margin-top: 0;
   font-size: 0.9rem;
 }
+
+.login-form h3 {
+  color: #de1d10;
+  text-align: center;
+}
+
+.login-form h3 img {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.7rem;
+  filter: invert(18%) sepia(63%) saturate(5270%) hue-rotate(356deg)
+    brightness(90%) contrast(95%);
+}

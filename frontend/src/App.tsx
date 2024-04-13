@@ -7,6 +7,9 @@ import HomePage from "./routes/HomePage";
 import ContactUsPage from "./routes/ContactUsPage";
 import AboutUsPage from "./routes/AboutUsPage";
 import RegisterPage from "./routes/RegisterPage";
+import LogoutPage, { loader as logoutLoader } from "./routes/LogoutPage";
+import { action as registerAction } from "./routes/RegisterPage";
+import ActivationPage from "./routes/ActivationPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -28,6 +31,16 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterPage />,
+        action: registerAction,
+      },
+      {
+        path: "/logout",
+        element: <LogoutPage />,
+        loader: logoutLoader,
+      },
+      {
+        path: "/activation",
+        element: <ActivationPage />,
       },
     ],
     errorElement: <ErrorPage />,

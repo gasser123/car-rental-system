@@ -9,9 +9,16 @@ import returnLocationRoutes from "./routes/returnLocationRoutes";
 import userVerificationRoutes from "./routes/userVerificationRoutes";
 import reservationRoutes from "./routes/reservationRoutes";
 import passwordResetRoutes from "./routes/passwordResetRoutes";
+import cors from "cors";
 dotenv.config();
 const { SERVER_PORT } = process.env;
 const app = express();
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 adminRoutes(app);

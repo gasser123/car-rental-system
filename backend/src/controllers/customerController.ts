@@ -245,9 +245,22 @@ export async function activateAccount(req: RequestObject, res: Response) {
       throw new Error("couldn't activate account user credential is missing");
     }
     await store.verifyCustomer(id);
-    res.clearCookie("token", {
-      secure: false,
+    const token = jwt.sign(
+      { customer_id: id, verified: 1 },
+      TOKEN_SECRET as string,
+      { expiresIn: "7d" }
+    );
+    const expiration_time = 1000 * 60 * 60 * 24 * 7;
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + expiration_time), // time until expiration
+      secure: false, // set to true if you're using https
       httpOnly: true,
+    });
+
+    res.cookie("logged", "customer", {
+      expires: new Date(Date.now() + expiration_time), // time until expiration
+      secure: false, // set to true if you're using https
+      httpOnly: false,
     });
     res.status(200);
     res.json("account verified successfully");
@@ -323,20 +336,17 @@ export async function checkVerified(
   }
 }
 
-export async function showCustomers(
-  req: RequestObject,
-  res: Response
-) {
+export async function showCustomers(req: RequestObject, res: Response) {
   try {
     const value = req.query.search;
     let customersInfo: CustomerInfo[] | null;
-    if(value === undefined){
+    if (value === undefined) {
       customersInfo = await store.getAllCustomers();
-    }else{
+    } else {
       const search = value as string;
       customersInfo = await store.advancedSearch(search);
     }
-    
+
     res.status(200);
     res.json(customersInfo);
   } catch (error) {

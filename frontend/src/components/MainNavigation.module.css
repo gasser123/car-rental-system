@@ -41,6 +41,7 @@ nav {
   gap: 1rem;
   list-style: none;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .list a {
@@ -57,7 +58,7 @@ nav {
 .login {
   color: whitesmoke;
   background-color: #474f7a;
-  padding: 0, 1.2rem;
+  padding: 0.4rem 1.2rem;
   font-size: 1rem;
   margin-top: 0;
   font-style: oblique;
@@ -69,6 +70,66 @@ nav {
 .login:hover {
   color: var(--color-primary-800);
   background-color: #81689d;
+}
+
+.user-icon {
+  height: 1.5rem;
+  width: 1.2rem;
+  cursor: pointer;
+  filter: invert(98%) sepia(100%) saturate(20%) hue-rotate(181deg)
+    brightness(116%) contrast(92%);
+}
+
+.user-icon:hover {
+  filter: invert(5%) sepia(6%) saturate(651%) hue-rotate(169deg) brightness(90%)
+    contrast(102%);
+}
+
+.logout-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 3%;
+}
+
+.account-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.5rem;
+}
+.options-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.options {
+  margin-top: 1%;
+  list-style: none;
+  background-color: white;
+  z-index: 5;
+  padding: 0.5rem 0.7rem;
+  height: fit-content;
+}
+
+.options li{
+ font-size: 1rem; 
+}
+
+
+.option {
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.option a {
+ text-decoration: none;
+ color: inherit; 
+}
+.option:hover {
+  background-color: aqua;
+  cursor: pointer;
 }
 
 @media only screen and (min-device-width: 50px) and (max-device-width: 360px) {

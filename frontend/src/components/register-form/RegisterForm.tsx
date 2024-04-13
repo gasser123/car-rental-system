@@ -1,7 +1,10 @@
-import { Form } from "react-router-dom";
+import { Form, useNavigation, useActionData } from "react-router-dom";
 import classes from "./RegisterForm.module.css";
 import Validator from "../../validations/Validator";
 import { useState } from "react";
+import FormErrorResponse from "../../entities/FormErrorResponse";
+import circleXmark from "../../assets/circle-xmark-solid.svg";
+import Spinner from "../UI/Spinner";
 type InputError = {
   driver_license_no: string | null;
   first_name: string | null;
@@ -20,8 +23,24 @@ const initialInputError: InputError = {
 };
 function RegisterForm() {
   const [inputError, setInputError] = useState<InputError>(initialInputError);
+  const navigation = useNavigation();
+  const responseData = useActionData();
+  const isSubmitting = navigation.state === "submitting";
   const validator = new Validator();
-
+  let formErrorMessage: FormErrorResponse | null = null;
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "status" in responseData &&
+    "errorMessage" in responseData &&
+    typeof responseData.status === "number" &&
+    typeof responseData.errorMessage === "string"
+  ) {
+    formErrorMessage = {
+      status: responseData.status,
+      errorMessage: responseData.errorMessage,
+    };
+  }
   const inputOnBlurHandler: React.FocusEventHandler<HTMLInputElement> = (
     event
   ) => {
@@ -168,9 +187,16 @@ function RegisterForm() {
   const mobile_noError = inputError.mobile_no ? (
     <p className={classes.error}>{inputError.mobile_no}</p>
   ) : null;
+
   return (
     <div className={classes["form-container"]}>
       <Form method="POST" className={classes["register-form"]}>
+        {formErrorMessage ? (
+          <h3>
+            <img src={circleXmark} alt="wrong" />
+            {formErrorMessage.errorMessage}
+          </h3>
+        ) : null}
         <div className={classes["input-group"]}>
           <label>Email</label>
           <input
@@ -239,8 +265,12 @@ function RegisterForm() {
           />
           {mobile_noError}
         </div>
-        <button type="submit" className={classes.action}>
-          Register
+        <button
+          type="submit"
+          className={classes.action}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner /> : "Register"}
         </button>
       </Form>
     </div>

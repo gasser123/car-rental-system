@@ -187,11 +187,12 @@ export async function editCar(req: RequestObject, res: Response) {
       model: req.body.model as unknown as string,
       image_url: req.body.image_url as unknown as string,
       plate_id: req.body.plate_id as unknown as string,
-      price_per_day: req.body.model as unknown as number,
+      price_per_day: req.body.price_per_day as unknown as number,
       status: req.body.status as unknown as status,
       year: req.body.year as unknown as string,
     };
     await store.updateCar(car);
+    res.json("car updated successfully");
   } catch (error) {
     let message = "";
     if (error instanceof Error) {

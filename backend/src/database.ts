@@ -14,6 +14,7 @@ if (ENV === "dev") {
     database: MYSQL_DB,
     user: MYSQL_USER,
     password: MYSQL_PASSWORD,
+    decimalNumbers: true,
   });
 } else {
   DBPool = mysql.createPool({
