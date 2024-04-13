@@ -1,6 +1,10 @@
 import UserVerification from "../entities/userVerificationEntity";
 import crypto from "node:crypto";
 import DB from "../database";
+import dotenv from "dotenv";
+dotenv.config();
+const { REACT_PORT } = process.env;
+const react_port = REACT_PORT || "3000";
 class UserVerificationStore {
   async createUserVerification(customer_id: number): Promise<string> {
     try {
@@ -22,7 +26,7 @@ class UserVerificationStore {
         verification.token,
       ]);
 
-      const activationURL = `http://localhost:8080/activation?token=${token}`;
+      const activationURL = `http://localhost:${react_port}/activate?token=${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);
@@ -49,7 +53,7 @@ class UserVerificationStore {
         verification.customer_id,
       ]);
 
-      const activationURL = `http://localhost:8080/activation?token=${token}`;
+      const activationURL = `http://localhost:${react_port}/activate?token=${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);

@@ -10,6 +10,7 @@ import RegisterPage from "./routes/RegisterPage";
 import LogoutPage, { loader as logoutLoader } from "./routes/LogoutPage";
 import { action as registerAction } from "./routes/RegisterPage";
 import ActivationPage from "./routes/ActivationPage";
+import ActivatePage, { loader as activateLoader } from "./routes/ActivatePage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
       {
         path: "/activation",
         element: <ActivationPage />,
+      },
+      {
+        path: "/activate",
+        element: <ActivatePage />,
+        loader: activateLoader,
       },
     ],
     errorElement: <ErrorPage />,

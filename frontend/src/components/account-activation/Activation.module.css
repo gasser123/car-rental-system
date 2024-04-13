@@ -25,6 +25,7 @@
 .container button {
   color: whitesmoke;
   min-width: fit-content;
+  width: 15%;
   background-color: #070f2b;
   padding: 1rem 1rem;
   font-size: 0.8rem;
@@ -38,7 +39,7 @@
 .container button:hover {
   background-color: #24234d;
   color: var(--color-primary-800);
-  border-color: #24234d;
+  border-color: #9594e6;
 }
 
 .error {

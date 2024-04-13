@@ -29,7 +29,7 @@ returnLocationRoutes(app);
 userVerificationRoutes(app);
 reservationRoutes(app);
 passwordResetRoutes(app);
-const port = parseInt(SERVER_PORT as unknown as string);
+const port = SERVER_PORT ? parseInt(SERVER_PORT) : 8080;
 app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });

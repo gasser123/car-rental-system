@@ -1,6 +1,10 @@
 import PasswordReset from "../entities/passwordResetEntity";
 import crypto from "node:crypto";
 import DB from "../database";
+import dotenv from "dotenv";
+dotenv.config();
+const { REACT_PORT } = process.env;
+const react_port = REACT_PORT || "3000";
 class PasswordResetStore {
   async createPasswordReset(customer_id: number): Promise<string> {
     try {
@@ -22,7 +26,7 @@ class PasswordResetStore {
         passwordReset.token,
       ]);
 
-      const activationURL = `http://localhost:8080/reset/${token}`;
+      const activationURL = `http://localhost:${react_port}/reset/${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);
@@ -49,7 +53,7 @@ class PasswordResetStore {
         passwordReset.customer_id,
       ]);
 
-      const activationURL = `http://localhost:8080/reset/${token}`;
+      const activationURL = `http://localhost:${react_port}/reset/${token}`;
       return activationURL;
     } catch (error) {
       console.error(error);
