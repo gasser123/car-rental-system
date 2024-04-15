@@ -121,7 +121,9 @@ nav {
 
 .option a {
  text-decoration: none;
- color: inherit; 
+ color: inherit;
+ display: block;
+ width: 100%; 
 }
 .option:hover {
   background-color: aqua;

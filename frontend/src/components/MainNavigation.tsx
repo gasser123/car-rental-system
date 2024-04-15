@@ -13,12 +13,13 @@ function MainNavigation() {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const optionsRef = useRef<HTMLUListElement>(null);
   const loggedContext = useContext(LoggedContext);
+
   const loggedIn = loggedContext.user;
-  useEffect(()=>{
-    if(!optionsRef.current){
-     setShowOptions(false);
-    } 
-   }, [loggedContext]);
+  useEffect(() => {
+    if (!optionsRef.current) {
+      setShowOptions(false);
+    }
+  }, [loggedContext]);
   const loginClickHandler: React.MouseEventHandler<HTMLButtonElement> = (
     event
   ) => {
@@ -45,11 +46,22 @@ function MainNavigation() {
     setShowOptions(false);
   };
 
+  const optionClickHandler: React.MouseEventHandler<HTMLAnchorElement> = () => {
+    setShowOptions(false);
+  };
   useClickAway(optionsRef, optionsCloseHandler);
   const userOptionsView = (
     <ul className={classes.options} ref={optionsRef}>
-      <li className={classes.option}>Profile</li>
-      <li className={classes.option}>Change Password</li>
+      <li className={classes.option}>
+        <Link to={"/profile"} onClick={optionClickHandler}>
+          Profile
+        </Link>
+      </li>
+      <li className={classes.option}>
+        <Link to={"/changepassword"} onClick={optionClickHandler}>
+          Change password
+        </Link>
+      </li>
       <li className={classes.option}>
         <Link to={"/logout"}>
           <img src={logoutImage} alt="" className={classes["logout-icon"]} />
