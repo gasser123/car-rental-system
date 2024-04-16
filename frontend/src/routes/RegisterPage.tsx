@@ -44,8 +44,7 @@ export const action: ActionFunction = async (actionArgs) => {
     return formErrorResponse;
   }
   if (!response.ok) {
-    const errorMessage = await response.json();
-    throw json({ message: errorMessage }, { status: response.status });
+    throw json({ message: message }, { status: response.status });
   }
 
   return redirect("/activation");

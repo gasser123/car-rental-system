@@ -5,7 +5,7 @@ import classes from "./Profile.module.css";
 import { Link, useLoaderData } from "react-router-dom";
 function Profile() {
   const data = useLoaderData();
-  let customerInfo: CustomerInfo = data as CustomerInfo;
+  let customerInfo: CustomerInfo | null = null;
   if (isCustomerInfo(data)) {
     customerInfo = data;
   }

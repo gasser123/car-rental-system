@@ -104,7 +104,7 @@ class CustomerStore {
   async getCustomerInfo(id: number): Promise<CustomerInfo | null> {
     try {
       const sql =
-        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no FROM customer WHERE id = ?";
+        "SELECT id, driver_license_no, first_name, last_name, email, mobile_no, verified FROM customer WHERE id = ?";
       const [rows] = await DB.execute(sql, [id]);
       const result = rows as unknown as CustomerInfo[];
       if (result.length === 0) {

@@ -9,6 +9,7 @@ export type CustomerInfo = {
 };
 function isCustomerInfo(value: unknown): value is CustomerInfo {
   const valueCheck = value as CustomerInfo;
+
   if (
     valueCheck.first_name !== undefined &&
     valueCheck.last_name !== undefined &&

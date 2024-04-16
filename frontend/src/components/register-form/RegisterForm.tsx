@@ -14,12 +14,12 @@ type InputError = {
   mobile_no: string | null;
 };
 const initialInputError: InputError = {
-  driver_license_no: null,
-  email: null,
-  first_name: null,
-  last_name: null,
-  mobile_no: null,
-  password: null,
+  driver_license_no: "",
+  email: "",
+  first_name: "",
+  last_name: "",
+  mobile_no: "",
+  password: "",
 };
 function RegisterForm() {
   const [inputError, setInputError] = useState<InputError>(initialInputError);
@@ -27,6 +27,15 @@ function RegisterForm() {
   const responseData = useActionData();
   const isSubmitting = navigation.state === "submitting";
   const validator = new Validator();
+  const inputFormErrorExists: boolean =
+    inputError.driver_license_no !== null ||
+    inputError.email !== null ||
+    inputError.first_name !== null ||
+    inputError.last_name !== null ||
+    inputError.mobile_no !== null ||
+    inputError.password !== null
+      ? true
+      : false;
   let formErrorMessage: FormErrorResponse | null = null;
   if (
     responseData &&
@@ -48,70 +57,65 @@ function RegisterForm() {
     const value = event.currentTarget.value;
     if (name === "email") {
       const validate = validator.validateEmail(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            email: "invalid email",
-          };
-          return newState;
-        });
-      }
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          email: !validate ? "invalid email" : null,
+        };
+        return newState;
+      });
     } else if (name === "password") {
       const validate = validator.validatePassword(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            password: `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`,
-          };
-          return newState;
-        });
-      }
+
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          password: !validate
+            ? `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`
+            : null,
+        };
+        return newState;
+      });
     } else if (name === "first_name") {
       const validate = validator.validateName(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            first_name: "invalid name",
-          };
-          return newState;
-        });
-      }
+
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          first_name: !validate ? "invalid name" : null,
+        };
+        return newState;
+      });
     } else if (name === "last_name") {
       const validate = validator.validateName(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            last_name: "invalid name",
-          };
-          return newState;
-        });
-      }
+
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          last_name: !validate ? "invalid name" : null,
+        };
+        return newState;
+      });
     } else if (name === "driver_license_no") {
       const validate = validator.validateLicense(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            driver_license_no: "invalid license",
-          };
-          return newState;
-        });
-      }
+
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          driver_license_no: !validate ? "invalid license" : null,
+        };
+        return newState;
+      });
     } else if (name === "mobile_no") {
       const validate = validator.validateMobileNo(value);
-      if (!validate) {
-        setInputError((currentState) => {
-          const newState: InputError = {
-            ...currentState,
-            mobile_no: "invalid mobile number",
-          };
-          return newState;
-        });
-      }
+
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          mobile_no: !validate ? "invalid mobile number" : null,
+        };
+        return newState;
+      });
     }
   };
   const inputOnChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
@@ -122,7 +126,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          email: null,
+          email: "",
         };
         return newState;
       });
@@ -130,7 +134,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          password: null,
+          password: "",
         };
         return newState;
       });
@@ -138,7 +142,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          first_name: null,
+          first_name: "",
         };
         return newState;
       });
@@ -146,7 +150,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          last_name: null,
+          last_name: "",
         };
         return newState;
       });
@@ -154,7 +158,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          driver_license_no: null,
+          driver_license_no: "",
         };
         return newState;
       });
@@ -162,7 +166,7 @@ function RegisterForm() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          mobile_no: null,
+          mobile_no: "",
         };
         return newState;
       });
@@ -268,7 +272,7 @@ function RegisterForm() {
         <button
           type="submit"
           className={classes.action}
-          disabled={isSubmitting}
+          disabled={isSubmitting || inputFormErrorExists}
         >
           {isSubmitting ? <Spinner /> : "Register"}
         </button>

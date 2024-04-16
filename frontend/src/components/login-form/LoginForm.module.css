@@ -73,3 +73,7 @@
   filter: invert(18%) sepia(63%) saturate(5270%) hue-rotate(356deg)
     brightness(90%) contrast(95%);
 }
+
+.login-form p {
+  text-align: center;
+}

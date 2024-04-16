@@ -6,6 +6,7 @@ import circleXmark from "../../assets/circle-xmark-solid.svg";
 import LoggedContext from "../../store/logged-context";
 import { useContext } from "react";
 import Spinner from "../UI/Spinner";
+import { Link } from "react-router-dom";
 interface Props {
   onHideModal: React.MouseEventHandler<HTMLDivElement>;
   onHideModalfunc: () => void;
@@ -90,6 +91,11 @@ const LoginForm: React.FC<Props> = (props) => {
     }
   };
 
+  const recoverClickHandler: React.MouseEventHandler<
+    HTMLAnchorElement
+  > = () => {
+    props.onHideModalfunc();
+  };
   const emailError = emailInputError ? (
     <p className={classes.error}>{emailInputError}</p>
   ) : null;
@@ -132,6 +138,12 @@ const LoginForm: React.FC<Props> = (props) => {
         <button type="submit" className={classes.action} disabled={isLoading}>
           {isLoading ? <Spinner /> : "Login"}
         </button>
+        <p>
+          forgot your password?{" "}
+          <Link to="/recover" onClick={recoverClickHandler}>
+            click here
+          </Link>
+        </p>
       </form>
     </Modal>
   );

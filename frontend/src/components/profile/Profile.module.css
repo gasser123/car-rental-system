@@ -7,11 +7,9 @@
   margin: 0 auto;
   width: 60%;
   border-bottom: #070f2b 1.5px solid;
-}
-
-.info-container {
   color: #070f2b;
 }
+
 
 .link {
   text-decoration: none;
@@ -41,4 +39,5 @@
   margin: 0 auto;
   margin-top: 1.5rem;
   width: 60%;
+  color: #070f2b;
 }

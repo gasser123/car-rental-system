@@ -12,6 +12,7 @@ import { action as registerAction } from "./routes/RegisterPage";
 import ActivationPage from "./routes/ActivationPage";
 import ActivatePage, { loader as activateLoader } from "./routes/ActivatePage";
 import ProfilePage, { loader as profileLoader } from "./routes/ProfilePage";
+import RecoverPage from "./routes/RecoverPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
         path: "/profile",
         element: <ProfilePage />,
         loader: profileLoader,
+      },
+      {
+       path: "/recover",
+       element: <RecoverPage /> 
       },
     ],
     errorElement: <ErrorPage />,
