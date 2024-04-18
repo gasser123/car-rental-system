@@ -2,9 +2,13 @@ import isCustomerInfo, {
   CustomerInfo,
 } from "../../validations/customerInfoValidation";
 import classes from "./Profile.module.css";
-import { Link, useLoaderData } from "react-router-dom";
-function Profile() {
-  const data = useLoaderData();
+import { Link} from "react-router-dom";
+interface Props {
+  info: CustomerInfo | null;
+  children?: React.ReactNode;
+}
+const Profile: React.FC<Props> = (props)=>{
+  const data = props.info;
   let customerInfo: CustomerInfo | null = null;
   if (isCustomerInfo(data)) {
     customerInfo = data;

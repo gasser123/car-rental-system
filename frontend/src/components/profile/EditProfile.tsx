@@ -1,45 +1,43 @@
 import { Form, useNavigation, useActionData } from "react-router-dom";
-import classes from "./RegisterForm.module.css";
+import classes from "./EditProfile.module.css";
 import Validator from "../../validations/Validator";
 import { useState, useRef } from "react";
 import FormErrorResponse from "../../entities/FormErrorResponse";
 import circleXmark from "../../assets/circle-xmark-solid.svg";
 import Spinner from "../UI/Spinner";
+import { CustomerInfo } from "../../validations/customerInfoValidation";
+interface Props {
+  info: CustomerInfo | null;
+  children?: React.ReactNode;
+}
 type InputError = {
   driver_license_no: string | null;
   first_name: string | null;
   last_name: string | null;
-  email: string | null;
-  password: string | null;
   mobile_no: string | null;
 };
 const initialInputError: InputError = {
   driver_license_no: null,
-  email: null,
   first_name: null,
   last_name: null,
   mobile_no: null,
-  password: null,
 };
-function RegisterForm() {
+const EditProfile: React.FC<Props> = (props) => {
   const [inputError, setInputError] = useState<InputError>(initialInputError);
   const navigation = useNavigation();
   const responseData = useActionData();
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
   const firstNameRef = useRef<HTMLInputElement>(null);
   const lastNameRef = useRef<HTMLInputElement>(null);
   const licenseRef = useRef<HTMLInputElement>(null);
   const mobileRef = useRef<HTMLInputElement>(null);
+  const profileData = props.info;
   const isSubmitting = navigation.state === "submitting";
   const validator = new Validator();
   const inputFormErrorExists: boolean =
     inputError.driver_license_no !== null ||
-    inputError.email !== null ||
     inputError.first_name !== null ||
     inputError.last_name !== null ||
-    inputError.mobile_no !== null ||
-    inputError.password !== null
+    inputError.mobile_no !== null
       ? true
       : false;
   let formErrorMessage: FormErrorResponse | null = null;
@@ -56,33 +54,13 @@ function RegisterForm() {
       errorMessage: responseData.errorMessage,
     };
   }
+
   const inputOnBlurHandler: React.FocusEventHandler<HTMLInputElement> = (
     event
   ) => {
     const name = event.currentTarget.name;
     const value = event.currentTarget.value;
-    if (name === "email") {
-      const validate = validator.validateEmail(value);
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          email: !validate ? "invalid email" : null,
-        };
-        return newState;
-      });
-    } else if (name === "password") {
-      const validate = validator.validatePassword(value);
-
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          password: !validate
-            ? `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`
-            : null,
-        };
-        return newState;
-      });
-    } else if (name === "first_name") {
+    if (name === "first_name") {
       const validate = validator.validateName(value);
 
       setInputError((currentState) => {
@@ -128,23 +106,7 @@ function RegisterForm() {
     event
   ) => {
     const name = event.currentTarget.name;
-    if (name === "email") {
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          email: "",
-        };
-        return newState;
-      });
-    } else if (name === "password") {
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          password: "",
-        };
-        return newState;
-      });
-    } else if (name === "first_name") {
+    if (name === "first_name") {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
@@ -180,41 +142,15 @@ function RegisterForm() {
   };
 
   const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
-    const email = emailRef.current?.value!;
-    const password = passwordRef.current?.value!;
     const first_name = firstNameRef.current?.value!;
     const last_name = lastNameRef.current?.value!;
     const license = licenseRef.current?.value!;
     const mobile = mobileRef.current?.value!;
 
-    const validateEmail = validator.validateEmail(email);
-    const validatePassword = validator.validatePassword(password);
     const validateFirstName = validator.validateName(first_name);
     const validateLastName = validator.validateName(last_name);
     const validateLicense = validator.validateLicense(license);
     const validateMobile = validator.validateMobileNo(mobile);
-
-    if (!validateEmail) {
-      event.preventDefault();
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          email: "invalid email",
-        };
-        return newState;
-      });
-    }
-
-    if (!validatePassword) {
-      event.preventDefault();
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          password: `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`,
-        };
-        return newState;
-      });
-    }
 
     if (!validateFirstName) {
       event.preventDefault();
@@ -261,12 +197,6 @@ function RegisterForm() {
     }
   };
 
-  const emailError = inputError.email ? (
-    <p className={classes.error}>{inputError.email}</p>
-  ) : null;
-  const passwordError = inputError.password ? (
-    <p className={classes.error}>{inputError.password}</p>
-  ) : null;
   const first_nameError = inputError.first_name ? (
     <p className={classes.error}>{inputError.first_name}</p>
   ) : null;
@@ -293,30 +223,7 @@ function RegisterForm() {
             {formErrorMessage.errorMessage}
           </h3>
         ) : null}
-        <div className={classes["input-group"]}>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            onBlur={inputOnBlurHandler}
-            className={inputError.email ? classes["input-error"] : ""}
-            onChange={inputOnChangeHandler}
-            ref={emailRef}
-          />
-          {emailError}
-        </div>
-        <div className={classes["input-group"]}>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            onBlur={inputOnBlurHandler}
-            className={inputError.password ? classes["input-error"] : ""}
-            onChange={inputOnChangeHandler}
-            ref={passwordRef}
-          />
-          {passwordError}
-        </div>
+
         <div className={classes["input-group"]}>
           <label>First name</label>
           <input
@@ -325,6 +232,7 @@ function RegisterForm() {
             onBlur={inputOnBlurHandler}
             className={inputError.first_name ? classes["input-error"] : ""}
             onChange={inputOnChangeHandler}
+            defaultValue={profileData ? profileData.first_name : ""}
             ref={firstNameRef}
           />
           {first_nameError}
@@ -337,6 +245,7 @@ function RegisterForm() {
             onBlur={inputOnBlurHandler}
             className={inputError.last_name ? classes["input-error"] : ""}
             onChange={inputOnChangeHandler}
+            defaultValue={profileData ? profileData.last_name : ""}
             ref={lastNameRef}
           />
           {last_nameError}
@@ -351,6 +260,7 @@ function RegisterForm() {
               inputError.driver_license_no ? classes["input-error"] : ""
             }
             onChange={inputOnChangeHandler}
+            defaultValue={profileData ? profileData.driver_license_no : ""}
             ref={licenseRef}
           />
           {driver_license_noError}
@@ -363,6 +273,7 @@ function RegisterForm() {
             onBlur={inputOnBlurHandler}
             className={inputError.mobile_no ? classes["input-error"] : ""}
             onChange={inputOnChangeHandler}
+            defaultValue={profileData ? profileData.mobile_no : ""}
             ref={mobileRef}
           />
           {mobile_noError}
@@ -372,11 +283,11 @@ function RegisterForm() {
           className={classes.action}
           disabled={isSubmitting || inputFormErrorExists}
         >
-          {isSubmitting ? <Spinner /> : "Register"}
+          {isSubmitting ? <Spinner /> : "Update profile"}
         </button>
       </Form>
     </div>
   );
-}
+};
 
-export default RegisterForm;
+export default EditProfile;

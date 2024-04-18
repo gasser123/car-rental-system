@@ -11,7 +11,6 @@ import reservationRoutes from "./routes/reservationRoutes";
 import passwordResetRoutes from "./routes/passwordResetRoutes";
 import cors from "cors";
 dotenv.config();
-const { SERVER_PORT } = process.env;
 const app = express();
 app.use(
   cors({
@@ -29,7 +28,7 @@ returnLocationRoutes(app);
 userVerificationRoutes(app);
 reservationRoutes(app);
 passwordResetRoutes(app);
-const port = SERVER_PORT ? parseInt(SERVER_PORT) : 8080;
+const port = 8080;
 app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });

@@ -14,6 +14,7 @@ function Recover() {
   const validator = new Validator();
   const inputFormErrorExists: boolean = inputError !== null;
   let formErrorMessage: FormErrorResponse | null = null;
+  let successMessage: string | null = null;
   if (
     responseData &&
     typeof responseData === "object" &&
@@ -26,16 +27,16 @@ function Recover() {
       status: responseData.status,
       errorMessage: responseData.errorMessage,
     };
+  } else if (responseData && typeof responseData === "string") {
+    successMessage = responseData;
   }
-
   const inputOnBlurHandler: React.FocusEventHandler<HTMLInputElement> = (
     event
   ) => {
     const value = event.currentTarget.value;
     const validate = validator.validateEmail(value);
     const stateValue: string | null = !validate ? "invalid email" : null;
-      setInputError(stateValue);
-    
+    setInputError(stateValue);
   };
 
   const inputOnChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
@@ -51,10 +52,14 @@ function Recover() {
     <div className={classes["form-container"]}>
       <Form method="POST" className={classes["recover-form"]}>
         {formErrorMessage ? (
-          <h3>
+          <h3 className={classes.fail}>
             <img src={circleXmark} alt="wrong" />
             {formErrorMessage.errorMessage}
           </h3>
+        ) : null}
+
+        {successMessage ? (
+          <h3 className={classes.success}>{successMessage}</h3>
         ) : null}
         <div className={classes["input-group"]}>
           <label>Enter your email</label>

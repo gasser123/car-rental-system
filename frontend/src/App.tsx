@@ -12,7 +12,13 @@ import { action as registerAction } from "./routes/RegisterPage";
 import ActivationPage from "./routes/ActivationPage";
 import ActivatePage, { loader as activateLoader } from "./routes/ActivatePage";
 import ProfilePage, { loader as profileLoader } from "./routes/ProfilePage";
-import RecoverPage from "./routes/RecoverPage";
+import RecoverPage, { action as recoverAction } from "./routes/RecoverPage";
+import PasswordResetPage, {
+  action as passwordResetAction,
+} from "./routes/PasswordResetPage";
+import EditProfilePage, {
+  action as editProfileAction,
+} from "./routes/EditProfilePage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,12 +58,29 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <ProfilePage />,
         loader: profileLoader,
+        id: "profile-data",
+        children: [
+          {
+            index: true,
+            element: <ProfilePage />,
+          },
+          {
+            path: "editprofile",
+            element: <EditProfilePage />,
+            action: editProfileAction,
+          },
+        ],
       },
       {
-       path: "/recover",
-       element: <RecoverPage /> 
+        path: "/recover",
+        element: <RecoverPage />,
+        action: recoverAction,
+      },
+      {
+        path: "/reset/:token",
+        element: <PasswordResetPage />,
+        action: passwordResetAction,
       },
     ],
     errorElement: <ErrorPage />,

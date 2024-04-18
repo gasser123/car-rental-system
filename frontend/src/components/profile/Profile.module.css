@@ -30,7 +30,7 @@
 .link:hover {
   background-color: #070f2b;
   border-color: #070f2b;
-  color: var(--color-primary-800);
+  color: black;
 }
 
 .email-container {  

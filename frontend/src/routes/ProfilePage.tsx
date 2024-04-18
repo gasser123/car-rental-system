@@ -1,8 +1,16 @@
-import { LoaderFunction, json } from "react-router-dom";
+import { LoaderFunction, json, useRouteLoaderData } from "react-router-dom";
 import Profile from "../components/profile/Profile";
+import isCustomerInfo, {
+  CustomerInfo,
+} from "../validations/customerInfoValidation";
 
 function ProfilePage() {
-  return <Profile />;
+  const data = useRouteLoaderData("profile-data");
+  let customerInfo: CustomerInfo | null = null;
+  if (isCustomerInfo(data)) {
+    customerInfo = data;
+  }
+  return <Profile info={customerInfo} />;
 }
 
 export const loader: LoaderFunction = async () => {

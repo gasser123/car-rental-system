@@ -1,5 +1,5 @@
 import Recover from "../components/account-recover/Recover";
-import { ActionFunction, redirect, json } from "react-router-dom";
+import { ActionFunction, json } from "react-router-dom";
 import FormErrorResponse from "../entities/FormErrorResponse";
 function RecoverPage() {
   return <Recover />;
@@ -14,13 +14,15 @@ export const action: ActionFunction = async (actionArgs) => {
   // passed as parameter
 
   const email = data.get("email")!;
-
+  const reqBody = {
+    email: email,
+  };
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(email),
+    body: JSON.stringify(reqBody),
   });
   const message = await response.json();
   if (response.status === 422) {
@@ -34,7 +36,15 @@ export const action: ActionFunction = async (actionArgs) => {
     throw json({ message: message }, { status: response.status });
   }
 
-  return redirect("/recovery");
+  if (message === "user email not found") {
+    const formErrorResponse: FormErrorResponse = {
+      errorMessage: message,
+      status: response.status,
+    };
+    return formErrorResponse;
+  }
+
+  return message;
 };
 
 export default RecoverPage;
