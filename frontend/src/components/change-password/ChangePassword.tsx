@@ -2,20 +2,23 @@ import { useState, useRef } from "react";
 import { useNavigation, useActionData, Form } from "react-router-dom";
 import Validator from "../../validations/Validator";
 import FormErrorResponse from "../../entities/FormErrorResponse";
-import classes from "./PasswordReset.module.css";
+import classes from "./ChangePassword.module.css";
 import circleXmark from "../../assets/circle-xmark-solid.svg";
 import Spinner from "../UI/Spinner";
 type InputError = {
+  currentPassword: string | null;
   newPassword: string | null;
   confirmPassword: string | null;
 };
 
 const initialInputError: InputError = {
+  currentPassword: null,
   newPassword: null,
   confirmPassword: null,
 };
-function PasswordReset() {
+function ChangePassword() {
   const [inputError, setInputError] = useState<InputError>(initialInputError);
+  const currentPasswordRef = useRef<HTMLInputElement>(null);
   const newPasswordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
   const navigation = useNavigation();
@@ -43,7 +46,15 @@ function PasswordReset() {
   const inputOnChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
     event
   ) => {
-    if (event.currentTarget.name === "newPassword") {
+    if (event.currentTarget.name === "currentPassword") {
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          currentPassword: null,
+        };
+        return newState;
+      });
+    } else  if (event.currentTarget.name === "newPassword") {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
@@ -52,19 +63,34 @@ function PasswordReset() {
         return newState;
       });
     } else {
-      setInputError((currentState) => {
-        const newState: InputError = {
-          ...currentState,
-          confirmPassword: null,
-        };
-        return newState;
-      });
+        setInputError((currentState) => {
+            const newState: InputError = {
+              ...currentState,
+              confirmPassword: null,
+            };
+            return newState;
+          });
     }
   };
 
   const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
+    const valueCurrent = currentPasswordRef.current?.value!;
+    const validateCurrent = validator.validatePassword(valueCurrent);
+    if (!validateCurrent) {
+      event.preventDefault();
+      setInputError((currentState) => {
+        const newState: InputError = {
+          ...currentState,
+          currentPassword: `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`,
+        };
+        return newState;
+      });
+    }
+
     const valueNew = newPasswordRef.current?.value!;
+
     const validateNew = validator.validatePassword(valueNew);
+
     if (!validateNew) {
       event.preventDefault();
       setInputError((currentState) => {
@@ -90,11 +116,17 @@ function PasswordReset() {
         return newState;
       });
     }
+
+
   };
 
   const newPasswordError = inputError.newPassword ? (
     <p className={classes.error}>{inputError.newPassword}</p>
   ) : null;
+  const currentPasswordError = inputError.currentPassword ? (
+    <p className={classes.error}>{inputError.currentPassword}</p>
+  ) : null;
+
   const confirmPasswordError = inputError.confirmPassword ? (
     <p className={classes.error}>{inputError.confirmPassword}</p>
   ) : null;
@@ -116,7 +148,19 @@ function PasswordReset() {
           <h3 className={classes.success}>{successMessage}</h3>
         ) : null}
         <div className={classes["input-group"]}>
-          <label>New Password</label>
+          <label>Current Password</label>
+          <input
+            type="password"
+            name="currentPassword"
+            className={inputError.currentPassword ? classes["input-error"] : ""}
+            onChange={inputOnChangeHandler}
+            ref={currentPasswordRef}
+          />
+          {currentPasswordError}
+        </div>
+
+        <div className={classes["input-group"]}>
+          <label>New password</label>
           <input
             type="password"
             name="newPassword"
@@ -128,7 +172,7 @@ function PasswordReset() {
         </div>
 
         <div className={classes["input-group"]}>
-          <label>Confirm Password</label>
+          <label>Confirm new password</label>
           <input
             type="password"
             name="confirmPassword"
@@ -143,11 +187,11 @@ function PasswordReset() {
           className={classes.action}
           disabled={isSubmitting}
         >
-          {isSubmitting ? <Spinner /> : "Send reset link"}
+          {isSubmitting ? <Spinner /> : "Update Password"}
         </button>
       </Form>
     </div>
   );
 }
 
-export default PasswordReset;
+export default ChangePassword;

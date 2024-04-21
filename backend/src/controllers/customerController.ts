@@ -164,7 +164,7 @@ export const changePassword = async (req: RequestObject, res: Response) => {
         secure: false,
         httpOnly: false,
       });
-      res.json("password changed successfully");
+      res.json("password changed successfully you need to login again");
     } else {
       throw new CustomError("wrong current password", 200);
     }

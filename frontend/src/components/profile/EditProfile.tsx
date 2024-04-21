@@ -213,7 +213,7 @@ const EditProfile: React.FC<Props> = (props) => {
   return (
     <div className={classes["form-container"]}>
       <Form
-        method="POST"
+        method="PATCH"
         className={classes["register-form"]}
         onSubmit={onSubmitHandler}
       >

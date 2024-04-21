@@ -19,6 +19,13 @@ import PasswordResetPage, {
 import EditProfilePage, {
   action as editProfileAction,
 } from "./routes/EditProfilePage";
+import EditEmailPage, {
+  action as editEmailAction,
+} from "./routes/EditEmailPage";
+import ChangePasswordPage, {
+  action as changePasswordAction,
+} from "./routes/ChangePasswordPage";
+import AdminLoginPage from "./routes/AdminLoginPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,6 +77,12 @@ const router = createBrowserRouter([
             element: <EditProfilePage />,
             action: editProfileAction,
           },
+
+          {
+            path: "editemail",
+            element: <EditEmailPage />,
+            action: editEmailAction,
+          },
         ],
       },
       {
@@ -81,6 +94,21 @@ const router = createBrowserRouter([
         path: "/reset/:token",
         element: <PasswordResetPage />,
         action: passwordResetAction,
+      },
+      {
+        path: "/changepassword",
+        element: <ChangePasswordPage />,
+        action: changePasswordAction,
+      },
+
+      {
+        path: "/admin",
+        children: [
+          {
+            index: true,
+            element: <AdminLoginPage />,
+          },
+        ],
       },
     ],
     errorElement: <ErrorPage />,

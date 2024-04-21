@@ -2,22 +2,23 @@ import { useState, useRef } from "react";
 import { useNavigation, useActionData, Form } from "react-router-dom";
 import Validator from "../../validations/Validator";
 import FormErrorResponse from "../../entities/FormErrorResponse";
-import classes from "./PasswordReset.module.css";
+import classes from "./EditEmail.module.css";
 import circleXmark from "../../assets/circle-xmark-solid.svg";
 import Spinner from "../UI/Spinner";
 type InputError = {
-  newPassword: string | null;
-  confirmPassword: string | null;
+  email: string | null;
+  currentPassword: string | null;
 };
 
 const initialInputError: InputError = {
-  newPassword: null,
-  confirmPassword: null,
+  email: null,
+  currentPassword: null,
 };
-function PasswordReset() {
+
+function EditEmail() {
   const [inputError, setInputError] = useState<InputError>(initialInputError);
-  const newPasswordRef = useRef<HTMLInputElement>(null);
-  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const currentPasswordRef = useRef<HTMLInputElement>(null);
   const navigation = useNavigation();
   const responseData = useActionData();
   const isSubmitting = navigation.state === "submitting";
@@ -43,11 +44,11 @@ function PasswordReset() {
   const inputOnChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
     event
   ) => {
-    if (event.currentTarget.name === "newPassword") {
+    if (event.currentTarget.name === "email") {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          newPassword: null,
+          email: null,
         };
         return newState;
       });
@@ -55,7 +56,7 @@ function PasswordReset() {
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          confirmPassword: null,
+          currentPassword: null,
         };
         return newState;
       });
@@ -63,40 +64,40 @@ function PasswordReset() {
   };
 
   const onSubmitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
-    const valueNew = newPasswordRef.current?.value!;
-    const validateNew = validator.validatePassword(valueNew);
+    const valueNew = emailRef.current?.value!;
+    const validateNew = validator.validateEmail(valueNew);
     if (!validateNew) {
       event.preventDefault();
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          newPassword: `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`,
+          email: "invalid email",
         };
         return newState;
       });
     }
 
-    const valueConfirm = confirmPasswordRef.current?.value!;
+    const valuePassword = currentPasswordRef.current?.value!;
 
-    const validateConfirm = valueConfirm === valueNew;
+    const validatePassword = validator.validatePassword(valuePassword);
 
-    if (!validateConfirm) {
+    if (!validatePassword) {
       event.preventDefault();
       setInputError((currentState) => {
         const newState: InputError = {
           ...currentState,
-          confirmPassword: "inputs don't match",
+          currentPassword: `password should be at least 8 characters - must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number - Can contain special characters`,
         };
         return newState;
       });
     }
   };
 
-  const newPasswordError = inputError.newPassword ? (
-    <p className={classes.error}>{inputError.newPassword}</p>
+  const emailError = inputError.email ? (
+    <p className={classes.error}>{inputError.email}</p>
   ) : null;
-  const confirmPasswordError = inputError.confirmPassword ? (
-    <p className={classes.error}>{inputError.confirmPassword}</p>
+  const currentPasswordError = inputError.currentPassword ? (
+    <p className={classes.error}>{inputError.currentPassword}</p>
   ) : null;
   return (
     <div className={classes["form-container"]}>
@@ -116,38 +117,38 @@ function PasswordReset() {
           <h3 className={classes.success}>{successMessage}</h3>
         ) : null}
         <div className={classes["input-group"]}>
-          <label>New Password</label>
+          <label>New Email</label>
           <input
-            type="password"
-            name="newPassword"
-            className={inputError.newPassword ? classes["input-error"] : ""}
+            type="email"
+            name="email"
+            className={inputError.email ? classes["input-error"] : ""}
             onChange={inputOnChangeHandler}
-            ref={newPasswordRef}
+            ref={emailRef}
           />
-          {newPasswordError}
+          {emailError}
         </div>
 
         <div className={classes["input-group"]}>
-          <label>Confirm Password</label>
+          <label>Enter your password</label>
           <input
             type="password"
-            name="confirmPassword"
-            className={inputError.confirmPassword ? classes["input-error"] : ""}
+            name="currentPassword"
+            className={inputError.currentPassword ? classes["input-error"] : ""}
             onChange={inputOnChangeHandler}
-            ref={confirmPasswordRef}
+            ref={currentPasswordRef}
           />
-          {confirmPasswordError}
+          {currentPasswordError}
         </div>
         <button
           type="submit"
           className={classes.action}
           disabled={isSubmitting}
         >
-          {isSubmitting ? <Spinner /> : "Send reset link"}
+          {isSubmitting ? <Spinner /> : "Update email"}
         </button>
       </Form>
     </div>
   );
 }
 
-export default PasswordReset;
+export default EditEmail;

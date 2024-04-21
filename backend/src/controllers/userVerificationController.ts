@@ -3,6 +3,10 @@ import UserVerificationStore from "../models/UserVerification";
 import RequestObject from "../entities/requestObject";
 import sendMail from "../utilities/mail";
 import CustomError from "../utilities/CustomError";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+const {TOKEN_SECRET} = process.env;
 const store = new UserVerificationStore();
 export async function createActivation(req: RequestObject, res: Response) {
   try {
@@ -133,12 +137,21 @@ export async function editEmailRecreateActivation(
       }
     });
     res.status(200);
-    res.clearCookie("token", {
-      secure: false,
+    const token = jwt.sign(
+      { customer_id: customer_id, verified: 0 },
+      TOKEN_SECRET as string,
+      { expiresIn: "7d" }
+    );
+    const expiration_time = 1000 * 60 * 60 * 24 * 7;
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + expiration_time), // time until expiration
+      secure: false, // set to true if you're using https
       httpOnly: true,
     });
-    res.clearCookie("logged", {
-      secure: false,
+
+    res.cookie("logged", "customer", {
+      expires: new Date(Date.now() + expiration_time), // time until expiration
+      secure: false, // set to true if you're using https
       httpOnly: false,
     });
     res.json("email is being sent");
