@@ -50,20 +50,34 @@ function MainNavigation() {
     setShowOptions(false);
   };
   useClickAway(optionsRef, optionsCloseHandler);
+  let profileURL: string = "";
+  let changePasswordURL: string = "";
+  let logoutURL: string = "";
+
+  if (loggedContext.user === "admin") {
+    profileURL = "/admin/profile";
+    changePasswordURL = "/admin/changepassword";
+    logoutURL = "/admin/logout";
+  } else if (loggedContext.user === "customer") {
+    profileURL = "/profile";
+    changePasswordURL = "/changepassword";
+    logoutURL = "/logout";
+  }
+
   const userOptionsView = (
     <ul className={classes.options} ref={optionsRef}>
       <li className={classes.option}>
-        <Link to={"/profile"} onClick={optionClickHandler}>
+        <Link to={profileURL} onClick={optionClickHandler}>
           Profile
         </Link>
       </li>
       <li className={classes.option}>
-        <Link to={"/changepassword"} onClick={optionClickHandler}>
+        <Link to={changePasswordURL} onClick={optionClickHandler}>
           Change password
         </Link>
       </li>
       <li className={classes.option}>
-        <Link to={"/logout"}>
+        <Link to={logoutURL}>
           <img src={logoutImage} alt="" className={classes["logout-icon"]} />
           Logout
         </Link>

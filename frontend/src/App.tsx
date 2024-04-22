@@ -25,7 +25,12 @@ import EditEmailPage, {
 import ChangePasswordPage, {
   action as changePasswordAction,
 } from "./routes/ChangePasswordPage";
-import AdminLoginPage from "./routes/AdminLoginPage";
+import AdminLoginPage, {
+  action as adminLoginAction,
+} from "./routes/AdminLoginPage";
+import AdminProfilePage, {
+  loader as adminProfileLoader,
+} from "./routes/AdminProfilePage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -107,6 +112,19 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AdminLoginPage />,
+            action: adminLoginAction,
+          },
+
+          {
+            path: "profile",
+            id: "admin-profile-data",
+            loader: adminProfileLoader,
+            children: [
+              {
+                index: true,
+                element: <AdminProfilePage />,
+              },
+            ],
           },
         ],
       },

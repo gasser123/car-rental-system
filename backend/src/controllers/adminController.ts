@@ -99,6 +99,10 @@ export async function getProfile(req: RequestObject, res: Response) {
       secure: false,
       httpOnly: true,
     });
+    res.clearCookie("logged", {
+      secure: false,
+      httpOnly: false,
+    });
     if (error instanceof CustomError) {
       res.status(error.status);
     } else {
@@ -120,7 +124,7 @@ export async function updateProfile(req: RequestObject, res: Response) {
       first_name: req.body.first_name as unknown as string,
       last_name: req.body.last_name as unknown as string,
     };
-   
+
     await store.updateAdminInfo(adminInfo);
     res.status(200);
     res.json("profile updated successfully");
