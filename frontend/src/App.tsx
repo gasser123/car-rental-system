@@ -31,6 +31,10 @@ import AdminLoginPage, {
 import AdminProfilePage, {
   loader as adminProfileLoader,
 } from "./routes/AdminProfilePage";
+import AdminEditProfilePage, {
+  action as adminEditProfileAction,
+} from "./routes/AdminEditProfilePage";
+import AdminDashboardRootPage from "./routes/AdminDashboardRootPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -124,9 +128,18 @@ const router = createBrowserRouter([
                 index: true,
                 element: <AdminProfilePage />,
               },
+              {
+                path: "editprofile",
+                element: <AdminEditProfilePage />,
+                action: adminEditProfileAction,
+              },
             ],
           },
         ],
+      },
+      {
+        path: "/dashboard",
+        element: <AdminDashboardRootPage />,
       },
     ],
     errorElement: <ErrorPage />,

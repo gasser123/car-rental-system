@@ -56,8 +56,8 @@ function MainNavigation() {
 
   if (loggedContext.user === "admin") {
     profileURL = "/admin/profile";
-    changePasswordURL = "/admin/changepassword";
-    logoutURL = "/admin/logout";
+    changePasswordURL = "/changepassword";
+    logoutURL = "/logout";
   } else if (loggedContext.user === "customer") {
     profileURL = "/profile";
     changePasswordURL = "/changepassword";

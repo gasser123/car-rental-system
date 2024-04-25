@@ -3,11 +3,12 @@ import { ActionFunction, json, useNavigate } from "react-router-dom";
 import FormErrorResponse from "../entities/FormErrorResponse";
 import { useContext, useEffect } from "react";
 import LoggedContext from "../store/logged-context";
+import { getCookie } from "../utilities/cookie";
 function ChangePasswordPage() {
   const loggedContext = useContext(LoggedContext);
   const navigate = useNavigate();
   useEffect(() => {
-    if (loggedContext.user !== "customer") {
+    if (loggedContext.user !== "customer" && loggedContext.user !== "admin") {
       navigate("/");
     }
   }, [loggedContext.user, navigate]);
@@ -16,9 +17,17 @@ function ChangePasswordPage() {
 
 export const action: ActionFunction = async (actionArgs) => {
   const { request } = actionArgs;
+  const user = getCookie("logged");
+  let url: string = "http://localhost:8080/changepassword";
+  if (user === "customer") {
+    url = "http://localhost:8080/changepassword";
+  } else if (user === "admin") {
+    url = "http://localhost:8080/admin/changepassword";
+  } else {
+    return;
+  }
   // get the submitted form data
   const data = await request.formData();
-  let url = "http://localhost:8080/changepassword";
   // get function gets the entered data for the corresponding input name
   // passed as parameter
   const inputData = {
