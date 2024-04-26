@@ -54,6 +54,21 @@ class ReservationStore {
     }
   }
 
+  async getUnconfirmedReservations(): Promise<Reservation[] | null> {
+    try {
+      const sql = "SELECT * FROM reservation WHERE confirmed = ?";
+      const [rows] = await DB.execute(sql, [0]);
+      const result = rows as unknown as Reservation[];
+      if (result.length === 0) {
+        return null;
+      }
+
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get unconfirmed reservations`);
+    }
+  }
   async updateConfirmReservation(id: number) {
     try {
       const sql = "UPDATE reservation SET confirmed = ? WHERE id = ?";

@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 import classes from "./DashboardMain.module.css";
 import arrow_down_icon from "../../assets/chevron-down-solid.svg";
 import arrow_up_icon from "../../assets/chevron-up-solid.svg";
 import { useState } from "react";
+import isAdminInfo, { AdminInfo } from "../../validations/adminInfoValidation";
 type DropDownsState = {
   reservations: boolean;
   cars: boolean;
@@ -26,6 +27,11 @@ const SideBarNav: React.FC<Props> = (props) => {
     initialDropDownsState
   );
 
+  const data = useLoaderData();
+  let adminInfo: AdminInfo | null = null;
+  if (isAdminInfo(data)) {
+    adminInfo = data;
+  }
   const reservationsLinks = (
     <div className={classes["dropdowns-links"]}>
       <Link to="unconfirmed">Unconfirmed reservations</Link>
@@ -146,14 +152,16 @@ const SideBarNav: React.FC<Props> = (props) => {
             />
             {dropDownsState.returnLocations ? returnLocationsLinks : null}
           </li>
-          <li id="admins" onClick={onDropDownClick}>
-            Admins{" "}
-            <img
-              src={dropDownsState.admins ? arrow_up_icon : arrow_down_icon}
-              alt="arrow-down"
-            />
-            {dropDownsState.admins ? adminsLinks : null}
-          </li>
+          {adminInfo && adminInfo.role === "root_admin" ? (
+            <li id="admins" onClick={onDropDownClick}>
+              Admins{" "}
+              <img
+                src={dropDownsState.admins ? arrow_up_icon : arrow_down_icon}
+                alt="arrow-down"
+              />
+              {dropDownsState.admins ? adminsLinks : null}
+            </li>
+          ) : null}
         </ul>
       </div>
       {props.children}

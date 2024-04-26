@@ -62,6 +62,20 @@ export async function showAllReservations(req: Request, res: Response) {
   }
 }
 
+export async function showUnconfirmedReservations(req: Request, res: Response) {
+  try {
+    const reservations = await store.getUnconfirmedReservations();
+    res.json(reservations);
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500);
+    res.json(message);
+  }
+}
+
 export async function confirmReservation(req: RequestObject, res: Response) {
   try {
     const value = req.params.id;
