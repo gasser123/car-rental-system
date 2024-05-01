@@ -3,6 +3,10 @@ import RequestObject from "../entities/requestObject";
 import CustomError from "../utilities/CustomError";
 import ReservationStore from "../models/Reservation";
 import Reservation from "../entities/reservationEntity";
+import {
+  getAdminReservations,
+  getAdminUnconfirmedReservations,
+} from "../services/reservationServices";
 const store = new ReservationStore();
 export async function makeAReservation(
   req: RequestObject,
@@ -62,9 +66,43 @@ export async function showAllReservations(req: Request, res: Response) {
   }
 }
 
+export async function showAllAdminReservationsInfo(
+  req: Request,
+  res: Response
+) {
+  try {
+    const reservations = await getAdminReservations();
+    res.json(reservations);
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500);
+    res.json(message);
+  }
+}
+
 export async function showUnconfirmedReservations(req: Request, res: Response) {
   try {
     const reservations = await store.getUnconfirmedReservations();
+    res.json(reservations);
+  } catch (error) {
+    let message = "";
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    res.status(500);
+    res.json(message);
+  }
+}
+
+export async function showAdminUnconfirmedReservationsInfo(
+  req: Request,
+  res: Response
+) {
+  try {
+    const reservations = await getAdminUnconfirmedReservations();
     res.json(reservations);
   } catch (error) {
     let message = "";

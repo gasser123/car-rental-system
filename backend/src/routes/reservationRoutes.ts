@@ -9,6 +9,8 @@ import {
   makeAReservation,
   showAllReservations,
   showUnconfirmedReservations,
+  showAllAdminReservationsInfo,
+  showAdminUnconfirmedReservationsInfo,
 } from "../controllers/reservationController";
 import isCustomerVerifiedAuth from "../middlewares/userVerified";
 import { validateReservationInputs } from "../middlewares/inputValidation";
@@ -29,7 +31,17 @@ const reservationRoutes = (app: Application) => {
     RentCar
   );
   app.get("/reservations", verifyAdminToken, showAllReservations);
-  app.get("/reservations/unconfirmed", verifyAdminToken, showUnconfirmedReservations);
+  app.get(
+    "/reservations/unconfirmed",
+    verifyAdminToken,
+    showUnconfirmedReservations
+  );
+  app.get("/reservationsinfo", verifyAdminToken, showAllAdminReservationsInfo);
+  app.get(
+    "/reservationsinfo/unconfirmed",
+    verifyAdminToken,
+    showAdminUnconfirmedReservationsInfo
+  );
   app.patch("/reservations/confirm/:id", verifyAdminToken, confirmReservation);
 };
 
