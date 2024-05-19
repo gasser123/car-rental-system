@@ -8,6 +8,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 @media screen and (max-width: 899px) {
@@ -24,4 +27,15 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
