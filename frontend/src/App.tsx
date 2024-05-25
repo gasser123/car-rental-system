@@ -35,7 +35,9 @@ import AdminEditProfilePage, {
   action as adminEditProfileAction,
 } from "./routes/AdminEditProfilePage";
 import AdminDashboardRootPage from "./routes/AdminDashboardRootPage";
-import UnconfirmedReservationsPage from "./routes/UnconfirmedReservationsPage";
+import UnconfirmedReservationsPage, {
+  loader as UnconfirmedReservationsLoader,
+} from "./routes/UnconfirmedReservationsPage";
 import DashboardHomePage from "./routes/DashboardHomePage";
 const router = createBrowserRouter([
   {
@@ -152,6 +154,7 @@ const router = createBrowserRouter([
           {
             path: "unconfirmed",
             element: <UnconfirmedReservationsPage />,
+            loader: UnconfirmedReservationsLoader,
           },
         ],
       },
