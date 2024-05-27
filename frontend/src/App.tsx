@@ -39,6 +39,11 @@ import UnconfirmedReservationsPage, {
   loader as UnconfirmedReservationsLoader,
 } from "./routes/UnconfirmedReservationsPage";
 import DashboardHomePage from "./routes/DashboardHomePage";
+import AllReservationsPage, {
+  loader as allReservationsLoader,
+} from "./routes/AllReservationsPage";
+import AllCarsPage, { loader as allCarsLoader } from "./routes/AllCarsPage";
+import AddCarPage, { action as addCarAction } from "./routes/AddCarPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -155,6 +160,21 @@ const router = createBrowserRouter([
             path: "unconfirmed",
             element: <UnconfirmedReservationsPage />,
             loader: UnconfirmedReservationsLoader,
+          },
+          {
+            path: "reservations",
+            element: <AllReservationsPage />,
+            loader: allReservationsLoader,
+          },
+          {
+            path: "cars",
+            element: <AllCarsPage />,
+            loader: allCarsLoader,
+          },
+          {
+            path: "addcar",
+            element: <AddCarPage />,
+            action: addCarAction,
           },
         ],
       },

@@ -2,7 +2,7 @@ import { LoaderFunction, json, useLoaderData } from "react-router-dom";
 import ReservationsInfo from "../components/dashboard/reservations/ReservationsInfo";
 import AdminReservationInfo from "../entities/AdminReservationInfo";
 import isArrayOfAdminReservationInfo from "../validations/adminReservationInfoValidation";
-function UnconfirmedReservationsPage() {
+function AllReservationsPage() {
   const data = useLoaderData();
   let adminReservationsInfo: AdminReservationInfo[] | null = null;
   if (isArrayOfAdminReservationInfo(data)) {
@@ -14,7 +14,7 @@ function UnconfirmedReservationsPage() {
 }
 
 export const loader: LoaderFunction = async () => {
-  const url = "http://localhost:8080/reservationsinfo/unconfirmed";
+  const url = "http://localhost:8080/reservationsinfo";
   const response = await fetch(url, {
     method: "GET",
     credentials: "include",
@@ -31,4 +31,4 @@ export const loader: LoaderFunction = async () => {
   return resData;
 };
 
-export default UnconfirmedReservationsPage;
+export default AllReservationsPage;
