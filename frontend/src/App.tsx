@@ -44,6 +44,10 @@ import AllReservationsPage, {
 } from "./routes/AllReservationsPage";
 import AllCarsPage, { loader as allCarsLoader } from "./routes/AllCarsPage";
 import AddCarPage, { action as addCarAction } from "./routes/AddCarPage";
+import EditCarPage, {
+  loader as editCarLoader,
+  action as editCarAction,
+} from "./routes/EditCarPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -168,8 +172,19 @@ const router = createBrowserRouter([
           },
           {
             path: "cars",
-            element: <AllCarsPage />,
-            loader: allCarsLoader,
+            children: [
+              {
+                index: true,
+                element: <AllCarsPage />,
+                loader: allCarsLoader,
+              },
+              {
+                path: ":id/edit",
+                element: <EditCarPage />,
+                loader: editCarLoader,
+                action: editCarAction,
+              },
+            ],
           },
           {
             path: "addcar",

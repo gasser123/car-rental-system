@@ -7,17 +7,31 @@ import {
   showAllCars,
   advancedSearchCars,
   checkPlateIdExists,
-  checkEditPlateIdExists
+  checkEditPlateIdExists,
+  showCar,
 } from "../controllers/carController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
-import { validateCarInputs} from "../middlewares/inputValidation";
+import { validateCarInputs } from "../middlewares/inputValidation";
 const carRoutes = (app: Application) => {
   app.get("/customer-cars", showCarsToCustomers);
   app.get("/customer-cars/search", searchCars);
   app.get("/cars/countries", showAllCountries);
-  app.post("/cars", verifyAdminToken, validateCarInputs, checkPlateIdExists,addCar);
-  app.patch("/cars/:id", verifyAdminToken, validateCarInputs, checkEditPlateIdExists,editCar);
+  app.post(
+    "/cars",
+    verifyAdminToken,
+    validateCarInputs,
+    checkPlateIdExists,
+    addCar
+  );
+  app.patch(
+    "/cars/:id",
+    verifyAdminToken,
+    validateCarInputs,
+    checkEditPlateIdExists,
+    editCar
+  );
   app.get("/cars", verifyAdminToken, showAllCars);
+  app.get("/cars/:id", verifyAdminToken, showCar);
   app.get("/cars/search", verifyAdminToken, advancedSearchCars);
 };
 

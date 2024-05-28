@@ -46,6 +46,21 @@ class CarStore {
     }
   }
 
+  async getCar(id: number): Promise<Car | null> {
+    try {
+      const sql = "SELECT * FROM car WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as unknown as Car[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result[0];
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get car info`);
+    }
+  }
+
   async updateCar(car: Car): Promise<void> {
     try {
       const {

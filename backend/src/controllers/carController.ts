@@ -51,6 +51,27 @@ export async function showAllCars(req: RequestObject, res: Response) {
   }
 }
 
+export async function showCar(req: RequestObject, res: Response) {
+  try {
+    const id = parseInt(req.params.id);
+    const car = await store.getCar(id);
+    if(!car){
+     throw new CustomError("resource not found", 404); 
+    }
+    res.json(car);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+    res.json(message);
+  }
+}
+
 export async function searchCars(req: Request, res: Response) {
   try {
     const country = req.query.country;

@@ -1,5 +1,6 @@
 .container {
   background-color: #474f7a;
+ flex: 1;
 }
 .info-container {
   display: flex;

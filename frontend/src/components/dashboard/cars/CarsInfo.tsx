@@ -20,6 +20,7 @@ const CarsInfo: React.FC<Props> = (props) => {
           <th>price per day</th>
           <th>status</th>
           <th>image</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
