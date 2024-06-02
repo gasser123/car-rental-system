@@ -1,0 +1,17 @@
+.table-action {
+    text-decoration: none;
+    background-color: #097509;
+    border: 5px solid #097509;
+    padding: 0 0.8rem;
+    border-radius: 8px;
+    color: whitesmoke;
+    font-size: 1rem;
+    font-style: italic;
+  }
+  
+  .table-action:hover{
+    background-color: #070f2b;
+    border-color: #070f2b;
+    color: var(--color-primary-800); 
+  }
+  

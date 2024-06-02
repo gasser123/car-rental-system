@@ -1,6 +1,7 @@
 .form-container {
   background-color: #474f7a;
   width: 100%;
+  flex: 1;
   height: fit-content;
   display: flex;
   justify-content: center;

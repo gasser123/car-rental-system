@@ -48,6 +48,12 @@ import EditCarPage, {
   loader as editCarLoader,
   action as editCarAction,
 } from "./routes/EditCarPage";
+import AllPickupLocationsPage, {
+  loader as allPickupLoader,
+} from "./routes/AllPickupLocationsPage";
+import AddPickupLocationPage, {
+  action as addPickupAction,
+} from "./routes/AddPickupLocationPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -190,6 +196,21 @@ const router = createBrowserRouter([
             path: "addcar",
             element: <AddCarPage />,
             action: addCarAction,
+          },
+          {
+            path: "pickuplocations",
+            children: [
+              {
+                index: true,
+                element: <AllPickupLocationsPage />,
+                loader: allPickupLoader,
+              },
+            ],
+          },
+          {
+            path: "addpickuplocation",
+            element: <AddPickupLocationPage />,
+            action: addPickupAction,
           },
         ],
       },
