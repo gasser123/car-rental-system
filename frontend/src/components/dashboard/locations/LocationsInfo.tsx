@@ -1,8 +1,9 @@
 import PickupLocation from "../../../entities/pickupLocationEntity";
 import Table from "../../UI/Table";
 import LocationInfo from "./LocationInfo";
+import ReturnLocation from "../../../entities/returnLocationEntity";
 interface Props {
-  locations: PickupLocation[] | null;
+  locations: PickupLocation[] | ReturnLocation[] | null;
   children?: React.ReactNode;
 }
 const LocationsInfo: React.FC<Props> = (props) => {

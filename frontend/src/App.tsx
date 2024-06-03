@@ -54,6 +54,24 @@ import AllPickupLocationsPage, {
 import AddPickupLocationPage, {
   action as addPickupAction,
 } from "./routes/AddPickupLocationPage";
+import EditPickupLocationPage, {
+  loader as editPickupLoader,
+  action as editPickupAction,
+} from "./routes/EditPickupLocationPage";
+import AllReturnLocationsPage, {
+  loader as allReturnLoader,
+} from "./routes/AllReturnLocationsPage";
+import EditReturnLocationPage, {
+  loader as editReturnLoader,
+  action as editReturnAction,
+} from "./routes/EditReturnLocationPage";
+import AddReturnLocationPage, {
+  action as addReturnAction,
+} from "./routes/AddReturnLocationPage";
+import AllAdminsPage, {
+  loader as allAdminsLoader,
+} from "./routes/AllAdminsPage";
+import AddAdminPage, { action as addAdminAction } from "./routes/AddAdminPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -205,12 +223,57 @@ const router = createBrowserRouter([
                 element: <AllPickupLocationsPage />,
                 loader: allPickupLoader,
               },
+              {
+                path: ":id/edit",
+                element: <EditPickupLocationPage />,
+                loader: editPickupLoader,
+                action: editPickupAction,
+              },
             ],
           },
           {
             path: "addpickuplocation",
             element: <AddPickupLocationPage />,
             action: addPickupAction,
+          },
+          {
+            path: "returnlocations",
+            children: [
+              {
+                index: true,
+                element: <AllReturnLocationsPage />,
+                loader: allReturnLoader,
+              },
+              {
+                path: ":id/edit",
+                element: <EditReturnLocationPage />,
+                loader: editReturnLoader,
+                action: editReturnAction,
+              },
+            ],
+          },
+          {
+            path: "addreturnlocation",
+            element: <AddReturnLocationPage />,
+            action: addReturnAction,
+          },
+          {
+            path: "admins",
+            children: [
+              {
+                index: true,
+                element: <AllAdminsPage />,
+                loader: allAdminsLoader,
+              },
+              {
+                path: ":id/delete",
+              },
+            ],
+          },
+          {
+            path: "addadmin",
+            element: <AddAdminPage />,
+            action: addAdminAction,
           },
         ],
       },

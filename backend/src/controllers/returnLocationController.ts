@@ -19,6 +19,32 @@ export async function getReturnLocations(_req: RequestObject, res: Response) {
   }
 }
 
+export async function getReturnLocation(req: RequestObject, res: Response) {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) {
+      throw new CustomError("resource not found", 404);
+    }
+    const location = await store.getReturn(id);
+    if (!location) {
+      throw new CustomError("resource not found", 404);
+    }
+    res.status(200);
+    res.json(location);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      message = error.message;
+      res.status(500);
+    }
+
+    res.json(message);
+  }
+}
+
 export async function addReturnLocation(req: Request, res: Response) {
   try {
     const location: ReturnLocation = {
@@ -164,33 +190,37 @@ export async function advancedSearchReturn(req: RequestObject, res: Response) {
   }
 }
 
-export async function checkLocationAlreadyExists(req: Request, res: Response, next: NextFunction){
+export async function checkLocationAlreadyExists(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-   const location: ReturnLocation ={
-     country: req.body.country as string,
-     city: req.body.city as string,
-     address: req.body.address as string
-    }
+    const location: ReturnLocation = {
+      country: req.body.country as string,
+      city: req.body.city as string,
+      address: req.body.address as string,
+    };
     const check = await store.locationAlreadyExists(location);
-    if(check){
-     throw new CustomError("location already exists", 200);
+    if (check) {
+      throw new CustomError("location already exists", 200);
     }
     next();
   } catch (error) {
-   let message = "";
-   if (error instanceof CustomError) {
-     res.status(error.status);
-     message = error.message;
-   } else if (error instanceof Error) {
-     res.status(500);
-     message = error.message;
-   }
- 
-   res.json(message);
-  } 
- }
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
 
- export async function checkEditLocationAlreadyExists(
+    res.json(message);
+  }
+}
+
+export async function checkEditLocationAlreadyExists(
   req: Request,
   res: Response,
   next: NextFunction

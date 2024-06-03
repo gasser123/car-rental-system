@@ -8,13 +8,15 @@ import {
   editPickupLocation,
   removePickupLocation,
   checkLocationAlreadyExists,
-  checkEditLocationAlreadyExists
+  checkEditLocationAlreadyExists,
+  getPickupLocation
 } from "../controllers/pickupLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
 const pickupLocationRoutes = (app: Application) => {
   app.get("/pickuplocations", getCountryPickup);
   app.get("/pickuplocations/all", verifyAdminToken, getPickupLocations);
+  app.get("/pickuplocations/:id", verifyAdminToken, getPickupLocation);
   app.get("/pickuplocations/search", searchCountryPickup);
   app.get(
     "/pickuplocations/advancedsearch",

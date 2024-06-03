@@ -1,8 +1,9 @@
 import PickupLocation from "../../../entities/pickupLocationEntity";
 import classes from "./LocationInfo.module.css";
 import { Link } from "react-router-dom";
+import ReturnLocation from "../../../entities/returnLocationEntity";
 interface Props {
-  locations: PickupLocation[];
+  locations: PickupLocation[] | ReturnLocation[];
   children?: React.ReactNode;
 }
 

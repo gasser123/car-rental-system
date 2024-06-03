@@ -18,6 +18,31 @@ export async function getPickupLocations(_req: RequestObject, res: Response) {
     res.json(message);
   }
 }
+export async function getPickupLocation(req: RequestObject, res: Response) {
+  try {
+    const id = parseInt(req.params.id);
+    if (!id) {
+      throw new CustomError("resource not found", 404);
+    }
+    const location = await store.getPickup(id);
+    if (!location) {
+      throw new CustomError("resource not found", 404);
+    }
+    res.status(200);
+    res.json(location);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      message = error.message;
+      res.status(500);
+    }
+
+    res.json(message);
+  }
+}
 
 export async function addPickupLocation(req: RequestObject, res: Response) {
   try {

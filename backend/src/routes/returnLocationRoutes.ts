@@ -8,13 +8,15 @@ import {
   editReturnLocation,
   removeReturnLocation,
   checkLocationAlreadyExists,
-  checkEditLocationAlreadyExists
+  checkEditLocationAlreadyExists,
+  getReturnLocation,
 } from "../controllers/returnLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
 const returnLocationRoutes = (app: Application) => {
   app.get("/returnlocations", getCountryReturn);
   app.get("/returnlocations/all", verifyAdminToken, getReturnLocations);
+  app.get("/returnlocations/:id", verifyAdminToken, getReturnLocation);
   app.get("/returnlocations/search", searchCountryReturn);
   app.get(
     "/returnlocations/advancedsearch",

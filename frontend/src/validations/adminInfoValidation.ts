@@ -8,18 +8,30 @@ export type AdminInfo = {
 };
 
 function isAdminInfo(value: unknown): value is AdminInfo {
-  const valueCheck = value as AdminInfo;
-
   if (
-    valueCheck.first_name !== undefined &&
-    valueCheck.last_name !== undefined &&
-    valueCheck.email !== undefined &&
-    valueCheck.id !== undefined &&
-    valueCheck.role !== undefined
+   value &&
+   typeof value === "object" &&
+   "id" in value &&
+   typeof value.id === "number" &&
+   (("email" in value &&
+   typeof value.email === "string" ) || "email" in value === false)&&
+   "first_name" in value &&
+   typeof value.first_name === "string" &&
+   "last_name" in value &&
+   typeof value.last_name === "string" &&
+   "role" in value &&
+   typeof value.role === "string" &&
+   (value.role === "root_admin" || value.role === "admin")
+    
   ) {
     return true;
   }
   return false;
+}
+
+export function isArrayOfAdminInfo(value: unknown): value is AdminInfo[]{
+
+  return Array.isArray(value) && value.every((element)=>isAdminInfo(element));
 }
 
 export default isAdminInfo;

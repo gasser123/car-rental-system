@@ -28,6 +28,21 @@ class PickupLocationStore {
     }
   }
 
+  async getPickup(id: number): Promise<PickupLocation | null> {
+    try {
+      const sql = "SELECT * FROM pickup_location WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as unknown as PickupLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result[0];
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get pickup location`);
+    }
+  }
+
   async updatePickupLocation(pickupLocation: PickupLocation): Promise<void> {
     try {
       const { id, country, city, address } = pickupLocation;

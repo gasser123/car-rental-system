@@ -1,0 +1,17 @@
+.table-action-delete {
+  text-decoration: none;
+  background-color: #cc1f1f;
+  border: 5px solid #cc1f1f;
+  padding: 0 0.8rem;
+  border-radius: 8px;
+  color: whitesmoke;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.table-action-delete:hover {
+  cursor: pointer;
+  background-color: #de1d10;
+  border-color: #de1d10;
+  color: var(--color-primary-800);
+}

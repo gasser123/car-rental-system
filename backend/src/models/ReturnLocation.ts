@@ -28,6 +28,21 @@ class ReturnLocationStore {
     }
   }
 
+  async getReturn(id: number): Promise<ReturnLocation | null> {
+    try {
+      const sql = "SELECT * FROM return_location WHERE id = ?";
+      const [rows] = await DB.execute(sql, [id]);
+      const result = rows as unknown as ReturnLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result[0];
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get return location`);
+    }
+  }
+
   async updateReturnLocation(returnLocation: ReturnLocation): Promise<void> {
     try {
       const { id, country, city, address } = returnLocation;
