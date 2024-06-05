@@ -78,3 +78,116 @@ export async function getAdminUnconfirmedReservations(): Promise<
     throw new Error("couldn't get admin unconfirmed reservations info");
   }
 }
+
+export async function allReservationsAdvancedSearch(
+  value: string
+): Promise<AdminReservationInfo[] | null> {
+  const idValue = parseInt(value);
+  const numberValue = parseFloat(value);
+  const valueSearch = `%${value}%`;
+  try {
+    const sql = `SELECT reservation.id AS reservation_id, email AS customer_email, plate_id, car.country AS reservation_country, pickup_location.city AS pickup_city, pickup_location.address AS pickup_address, return_location.city AS return_city, return_location.address AS return_address, reservation_date, pickup_date, return_date, total_amount, confirmed 
+    FROM reservation INNER JOIN customer
+    ON customer_id = customer.id
+    INNER JOIN car
+    ON car_id = car.id
+    INNER JOIN pickup_location
+    ON pickup_location_id = pickup_location.id
+    INNER JOIN return_location
+    ON return_location_id = return_location.id
+    WHERE reservation_id = ? OR 
+    customer_email LIKE ? OR 
+    plate_id = ? OR 
+    reservation_country LIKE ? OR 
+    pickup_city LIKE ? OR 
+    pickup_address LIKE ? OR 
+    return_city LIKE ? OR 
+    return_address LIKE ? OR 
+    reservation_date LIKE ? OR 
+    pickup_date LIKE ? OR 
+    return_date LIKE ? OR 
+    total_amount LIKE ? OR 
+    confirmed = ? 
+    `;
+    const [rows] = await DB.execute(sql, [
+      idValue,
+      valueSearch,
+      idValue,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      numberValue,
+      idValue,
+    ]);
+    const result = rows as unknown as AdminReservationInfo[];
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error(`couldn't do an advanced search`);
+  }
+}
+
+export async function unconfirmedReservationsAdvancedSearch(
+  value: string
+): Promise<AdminReservationInfo[] | null> {
+  const idValue = parseInt(value);
+  const numberValue = parseFloat(value);
+  const valueSearch = `%${value}%`;
+  try {
+    const sql = `SELECT reservation.id AS reservation_id, email AS customer_email, plate_id, car.country AS reservation_country, pickup_location.city AS pickup_city, pickup_location.address AS pickup_address, return_location.city AS return_city, return_location.address AS return_address, reservation_date, pickup_date, return_date, total_amount, confirmed 
+    FROM reservation INNER JOIN customer
+    ON customer_id = customer.id
+    INNER JOIN car
+    ON car_id = car.id
+    INNER JOIN pickup_location
+    ON pickup_location_id = pickup_location.id
+    INNER JOIN return_location
+    ON return_location_id = return_location.id
+    WHERE reservation_id = ? OR 
+    customer_email LIKE ? OR 
+    plate_id = ? OR 
+    reservation_country LIKE ? OR 
+    pickup_city LIKE ? OR 
+    pickup_address LIKE ? OR 
+    return_city LIKE ? OR 
+    return_address LIKE ? OR 
+    reservation_date LIKE ? OR 
+    pickup_date LIKE ? OR 
+    return_date LIKE ? OR 
+    total_amount LIKE ? OR 
+    confirmed = 0 
+    `;
+    const [rows] = await DB.execute(sql, [
+      idValue,
+      valueSearch,
+      idValue,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      valueSearch,
+      numberValue,
+    ]);
+    const result = rows as unknown as AdminReservationInfo[];
+    if (result.length === 0) {
+      return null;
+    }
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error(`couldn't do an advanced search`);
+  }
+}

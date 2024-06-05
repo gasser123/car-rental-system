@@ -72,6 +72,10 @@ import AllAdminsPage, {
   loader as allAdminsLoader,
 } from "./routes/AllAdminsPage";
 import AddAdminPage, { action as addAdminAction } from "./routes/AddAdminPage";
+import DeleteAdminPage, {
+  loader as deleteAdminLoader,
+  action as deleteAdminAction,
+} from "./routes/DeleteAdminPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -267,6 +271,9 @@ const router = createBrowserRouter([
               },
               {
                 path: ":id/delete",
+                element: <DeleteAdminPage />,
+                loader: deleteAdminLoader,
+                action: deleteAdminAction,
               },
             ],
           },

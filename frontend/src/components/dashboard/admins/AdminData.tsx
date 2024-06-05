@@ -1,5 +1,6 @@
 import classes from "./AdminData.module.css";
 import { AdminInfo } from "../../../validations/adminInfoValidation";
+import { useFetcher } from "react-router-dom";
 interface Props {
   admins: AdminInfo[];
   children?: React.ReactNode;
@@ -7,6 +8,7 @@ interface Props {
 
 const AdminData: React.FC<Props> = (props) => {
   const { admins } = props;
+  const deleteFetcher = useFetcher();
   return (
     <>
       {admins.map((element) => (
@@ -17,9 +19,12 @@ const AdminData: React.FC<Props> = (props) => {
           <td>{element.last_name}</td>
           <td>{element.role}</td>
           <td>
-            <button className={classes["table-action-delete"]}>
+            {<deleteFetcher.Form method="DELETE" action={`${element.id}/delete`}>
+              <button type="submit" className={classes["table-action-delete"]}>
               delete
             </button>
+            </deleteFetcher.Form>}
+            
           </td>
         </tr>
       ))}

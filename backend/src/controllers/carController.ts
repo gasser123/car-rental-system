@@ -39,7 +39,13 @@ export async function showCarsToCustomers(req: Request, res: Response) {
 
 export async function showAllCars(req: RequestObject, res: Response) {
   try {
-    const cars = await store.getAllCars();
+    const search = req.query.search;
+    let cars: Car[] | null = null;
+    if (!search) {
+      cars = await store.getAllCars();
+    } else {
+      cars = await store.advancedSearch(search as string);
+    }
     res.json(cars);
   } catch (error) {
     let message = "";
@@ -55,8 +61,8 @@ export async function showCar(req: RequestObject, res: Response) {
   try {
     const id = parseInt(req.params.id);
     const car = await store.getCar(id);
-    if(!car){
-     throw new CustomError("resource not found", 404); 
+    if (!car) {
+      throw new CustomError("resource not found", 404);
     }
     res.json(car);
   } catch (error) {
@@ -279,33 +285,6 @@ export async function RentCar(req: RequestObject, res: Response) {
       message = error.message;
     }
     res.status(500);
-    res.json(message);
-  }
-}
-
-export async function advancedSearchCars(req: RequestObject, res: Response) {
-  try {
-    const search = req.query.search;
-
-    if (!search) {
-      throw new CustomError("no search value found", 422);
-    }
-
-    const searchValue = search as string;
-
-    const cars = await store.advancedSearch(searchValue);
-
-    res.json(cars);
-  } catch (error) {
-    let message = "";
-    if (error instanceof CustomError) {
-      res.status(error.status);
-      message = error.message;
-    } else if (error instanceof Error) {
-      res.status(500);
-      message = error.message;
-    }
-
     res.json(message);
   }
 }

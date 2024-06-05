@@ -5,7 +5,6 @@ import {
   addCar,
   editCar,
   showAllCars,
-  advancedSearchCars,
   checkPlateIdExists,
   checkEditPlateIdExists,
   showCar,
@@ -32,7 +31,6 @@ const carRoutes = (app: Application) => {
   );
   app.get("/cars", verifyAdminToken, showAllCars);
   app.get("/cars/:id", verifyAdminToken, showCar);
-  app.get("/cars/search", verifyAdminToken, advancedSearchCars);
 };
 
 export default carRoutes;

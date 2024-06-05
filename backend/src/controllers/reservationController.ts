@@ -6,7 +6,10 @@ import Reservation from "../entities/reservationEntity";
 import {
   getAdminReservations,
   getAdminUnconfirmedReservations,
+  allReservationsAdvancedSearch,
+  unconfirmedReservationsAdvancedSearch,
 } from "../services/reservationServices";
+import AdminReservationInfo from "../entities/AdminReservationInfo";
 const store = new ReservationStore();
 export async function makeAReservation(
   req: RequestObject,
@@ -71,7 +74,14 @@ export async function showAllAdminReservationsInfo(
   res: Response
 ) {
   try {
-    const reservations = await getAdminReservations();
+    const value = req.query.search;
+    let reservations: AdminReservationInfo[] | null = null;
+    if (value === undefined) {
+      reservations = await getAdminReservations();
+    } else {
+      reservations = await allReservationsAdvancedSearch(value as string);
+    }
+
     res.json(reservations);
   } catch (error) {
     let message = "";
@@ -102,7 +112,16 @@ export async function showAdminUnconfirmedReservationsInfo(
   res: Response
 ) {
   try {
-    const reservations = await getAdminUnconfirmedReservations();
+    const value = req.query.search;
+    let reservations: AdminReservationInfo[] | null = null;
+    if (value === undefined) {
+      reservations = await getAdminUnconfirmedReservations();
+    } else {
+      reservations = await unconfirmedReservationsAdvancedSearch(
+        value as string
+      );
+    }
+
     res.json(reservations);
   } catch (error) {
     let message = "";

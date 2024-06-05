@@ -1,0 +1,11 @@
+.dashboard-main{   
+ display: flex;
+ flex-direction: column;
+ flex: 1;
+ justify-content: center;
+ align-items: center;   
+}
+.dashboard-main form{
+ margin: 1rem auto ;   
+ width: 80%;
+}
