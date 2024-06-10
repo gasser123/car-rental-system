@@ -11,8 +11,14 @@ function AllAdminsPage() {
   return <AdminsData admins={admins} />;
 }
 
-export const loader: LoaderFunction = async () => {
-  const url = "http://localhost:8080/admin/admins";
+export const loader: LoaderFunction = async (loaderArgs) => {
+  const {request} = loaderArgs;
+  const requestURL = new URL(request.url);
+  const searchTermValue = requestURL.searchParams.get("search");
+  let url = "http://localhost:8080/admin/admins";
+  if(searchTermValue){
+    url = `http://localhost:8080/admin/admins?search=${searchTermValue}`;
+   }
   const response = await fetch(url, {
     method: "GET",
     credentials: "include",

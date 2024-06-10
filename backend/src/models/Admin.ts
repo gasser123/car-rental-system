@@ -93,6 +93,29 @@ class AdminStore {
     }
   }
 
+  async advancedSearch(value: string): Promise<AdminInfo[] | null> {
+    try {
+      const idValue = parseInt(value);
+      const searchValue = `%${value}%`;
+      const sql =
+        "SELECT id, email, first_name, last_name, role FROM admin WHERE role != 'root_admin' AND (id = ? OR email LIKE ? OR first_name LIKE ? OR last_name LIKE ?)";
+      const [rows] = await DB.execute(sql, [
+        idValue,
+        searchValue,
+        searchValue,
+        searchValue,
+      ]);
+      const result = rows as unknown as AdminInfo[];
+      if (result.length === 0) {
+        return null;
+      }
+      return result;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`couldn't get do an advanced search on pickup locations`);
+    }
+  }
+
   async getAdminInfo(id: number): Promise<AdminInfo | null> {
     try {
       const sql =

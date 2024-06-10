@@ -19,7 +19,7 @@ const returnLocationRoutes = (app: Application) => {
   app.get("/returnlocations/:id", verifyAdminToken, getReturnLocation);
   app.get("/returnlocations/search", searchCountryReturn);
   app.get(
-    "/returnlocations/advancedsearch",
+    "/returnlocations-search",
     verifyAdminToken,
     advancedSearchReturn
   );

@@ -13,8 +13,14 @@ function AllReservationsPage() {
   );
 }
 
-export const loader: LoaderFunction = async () => {
-  const url = "http://localhost:8080/reservationsinfo";
+export const loader: LoaderFunction = async (loaderArgs) => {
+  const {request} = loaderArgs;
+  const requestURL = new URL(request.url);
+  const searchTermValue = requestURL.searchParams.get("search");
+  let url = "http://localhost:8080/reservationsinfo";
+  if(searchTermValue){
+    url = `http://localhost:8080/reservationsinfo?search=${searchTermValue}`;
+   }
   const response = await fetch(url, {
     method: "GET",
     credentials: "include",

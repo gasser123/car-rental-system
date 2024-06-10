@@ -1,6 +1,9 @@
 import AdminReservationInfo from "../../../entities/AdminReservationInfo";
 import Table from "../../UI/Table";
 import ReservationInfo from "./ReservationInfo";
+import classes from "./ReservationsInfo.module.css";
+import { Form } from "react-router-dom";
+import SearchBar from "../../UI/SearchBar";
 interface Props {
   adminReservationsInfo: AdminReservationInfo[] | null;
   children?: React.ReactNode;
@@ -8,6 +11,10 @@ interface Props {
 const ReservationsInfo: React.FC<Props> = (props) => {
   const { adminReservationsInfo } = props;
   return adminReservationsInfo ? (
+    <div className={classes["dashboard-main"]}>
+      <Form method="GET">
+        <SearchBar />
+      </Form>
     <Table>
       <thead>
         <tr>
@@ -30,6 +37,7 @@ const ReservationsInfo: React.FC<Props> = (props) => {
         <ReservationInfo adminReservationsInfo={adminReservationsInfo} />
       </tbody>
     </Table>
+    </div>
   ) : (
     <h2 style={{ textAlign: "center", margin: "0 auto" }}>
       No reservations found at the moment

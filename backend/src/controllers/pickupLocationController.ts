@@ -168,7 +168,7 @@ export async function searchCountryPickup(req: Request, res: Response) {
 }
 export async function advancedSearchPickup(req: RequestObject, res: Response) {
   try {
-    const searchValue = req.query.value;
+    const searchValue = req.query.search;
     if (!searchValue) {
       throw new CustomError("invalid search input", 422);
     }

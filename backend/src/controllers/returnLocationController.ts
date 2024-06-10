@@ -169,7 +169,7 @@ export async function searchCountryReturn(req: Request, res: Response) {
 }
 export async function advancedSearchReturn(req: RequestObject, res: Response) {
   try {
-    const searchValue = req.query.value;
+    const searchValue = req.query.search;
     if (!searchValue) {
       throw new CustomError("invalid search input", 422);
     }

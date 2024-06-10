@@ -218,6 +218,7 @@ export async function removeAdmin(req: RequestObject, res: Response) {
 export async function showAdmins(req: RequestObject, res: Response) {
   try {
     const role = req.role;
+    const searchValue = req.query.search;
     if (!role) {
       throw new CustomError("couldn't verify admin", 401);
     }
@@ -225,9 +226,37 @@ export async function showAdmins(req: RequestObject, res: Response) {
       throw new CustomError("unauthorized", 403);
     }
 
-    const adminsInfo = await store.getAllAdmins();
+    let adminsInfo: AdminInfo[] | null = null;
+    if (!searchValue) {
+      adminsInfo = await store.getAllAdmins();
+    } else {
+      adminsInfo = await store.advancedSearch(searchValue as string);
+    }
     res.status(200);
     res.json(adminsInfo);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
+export async function advancedSearchAdmins(req: RequestObject, res: Response) {
+  try {
+    const searchValue = req.query.search;
+    if (!searchValue) {
+      throw new CustomError("invalid search input", 422);
+    }
+    const search = searchValue as string;
+    const admins = await store.advancedSearch(search);
+    res.json(admins);
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {

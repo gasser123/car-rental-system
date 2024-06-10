@@ -19,7 +19,7 @@ const pickupLocationRoutes = (app: Application) => {
   app.get("/pickuplocations/:id", verifyAdminToken, getPickupLocation);
   app.get("/pickuplocations/search", searchCountryPickup);
   app.get(
-    "/pickuplocations/advancedsearch",
+    "/pickuplocations-search",
     verifyAdminToken,
     advancedSearchPickup
   );
