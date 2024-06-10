@@ -1,40 +1,30 @@
 import classes from "./InfoForm.module.css";
 import PickupLocation from "../entities/pickupLocationEntity";
 import ReturnLocation from "../entities/returnLocationEntity";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import ReservationValidator from "../validations/ReservationValidator";
 import CarValidator from "../validations/CarValidator";
 import LocationValidator from "../validations/LocationValidator";
 import circleXmark from "../assets/circle-xmark-solid.svg";
+import { Form } from "react-router-dom";
+import Countries from "../entities/Countries";
+import isArrayOfPickupLocations from "../validations/pickuplocationResponseValidation";
+import isArrayOfReturnLocations from "../validations/returnLocationResponseValidation";
 const reservationValidator = new ReservationValidator();
 const carValidator = new CarValidator();
 const locationValidator = new LocationValidator();
-type Countries = { country: string }[] | null;
-const countries: Countries = [
-  { country: "Egypt" },
-  { country: "Canada" },
-  { country: "France" },
-  { country: "Turkey" },
-  { country: "UAE" },
-];
-const pickupLocations: PickupLocation[] = [
-  { id: 1, country: "Egypt", city: "Alexandria", address: "Mandara" },
-  { id: 2, country: "Egypt", city: "Cairo", address: "Zamalek" },
-  { id: 3, country: "Canada", city: "Ontario", address: "Sekoseko" },
-  { id: 4, country: "France", city: "Paris", address: "Eiffel" },
-  { id: 5, country: "Turkey", city: "Istanbul", address: "Bekobeko" },
-  { id: 6, country: "UAE", city: "Dubai", address: "Airport" },
-];
-const returnLocations: ReturnLocation[] = [
-  { id: 1, country: "Egypt", city: "Alexandria", address: "Mandara" },
-  { id: 2, country: "Egypt", city: "Cairo", address: "Zamalek" },
-  { id: 3, country: "Canada", city: "Ontario", address: "Sekoseko" },
-  { id: 4, country: "France", city: "Paris", address: "Eiffel" },
-  { id: 5, country: "Turkey", city: "Istanbul", address: "Bekobeko" },
-  { id: 6, country: "UAE", city: "Dubai", address: "Airport" },
-];
 
-function InfoForm() {
+interface Props {
+  countries: { country: string }[] | null;
+}
+const InfoForm: React.FC<Props> = (props) => {
+  const countries: Countries = props.countries;
+  const [pickupLocations, setPickupLocations] = useState<
+    PickupLocation[] | null
+  >(null);
+  const [returnLocations, setReturnLocations] = useState<
+    ReturnLocation[] | null
+  >(null);
   const [pickupLocationsState, setPickupLocationsState] = useState<
     PickupLocation[] | null
   >(null);
@@ -47,6 +37,30 @@ function InfoForm() {
   const countryRef = useRef<HTMLSelectElement>(null);
   const pickupDateRef = useRef<HTMLInputElement>(null);
   const returnDateRef = useRef<HTMLInputElement>(null);
+  const [countryChanged, setCountryChanged] = useState(countryRef.current?.value);
+  useEffect(() => {
+    async function fetchPickupLocations() {
+      const country = countryRef.current?.value;
+      const url = `http://localhost:8080/pickuplocations?country=${country}`;
+      const response = await fetch(url);
+      const responseData = await response.json();
+      if (isArrayOfPickupLocations(responseData)) {
+        setPickupLocations(responseData);
+      }
+    }
+
+    async function fetchReturnLocations() {
+      const country = countryRef.current?.value;
+      const url = `http://localhost:8080/returnlocations?country=${country}`;
+      const response = await fetch(url);
+      const responseData = await response.json();
+      if (isArrayOfReturnLocations(responseData)) {
+        setReturnLocations(responseData);
+      }
+    }
+    fetchPickupLocations();
+    fetchReturnLocations();
+  }, [countryChanged]);
 
   const filterPickupResults = (value: string): PickupLocation[] | null => {
     if (pickupLocations) {
@@ -99,20 +113,24 @@ function InfoForm() {
       if (countryValue === undefined) {
         return;
       }
-      const locations = pickupLocations.filter(
-        (element) =>
-          element.country.toLowerCase() === countryValue.toLowerCase()
-      );
+      const locations = pickupLocations
+        ? pickupLocations.filter(
+            (element) =>
+              element.country.toLowerCase() === countryValue.toLowerCase()
+          )
+        : null;
       setPickupLocationsState(locations);
     } else if (event.currentTarget.id === "returnLocation") {
       const countryValue = countryRef.current?.value;
       if (countryValue === undefined) {
         return;
       }
-      const locations = returnLocations.filter(
-        (element) =>
-          element.country.toLowerCase() === countryValue.toLowerCase()
-      );
+      const locations = returnLocations
+        ? returnLocations.filter(
+            (element) =>
+              element.country.toLowerCase() === countryValue.toLowerCase()
+          )
+        : null;
       setReturnLocationsState(locations);
     }
   };
@@ -162,8 +180,17 @@ function InfoForm() {
     setReturnLocationsState(null);
   };
 
+  const countryChangeHandler: React.ChangeEventHandler<
+    HTMLSelectElement
+  > = (event) => {
+    setCountryChanged(event.currentTarget.value);
+  };
+
   const submitHandler: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
+    if (!pickupLocations || !returnLocations) {
+      event.preventDefault();
+      return;
+    }
     const countryValue = countryRef.current?.value;
     const pickupLocationValue = pickupInput;
     const returnLocationValue = returnInput;
@@ -180,26 +207,31 @@ function InfoForm() {
     const validateReturnDate =
       reservationValidator.validateDate(returnDateValue);
     if (!validateCountry) {
+      event.preventDefault();
       setError("invalid country");
       return;
     }
 
     if (!validatePickupLocation) {
+      event.preventDefault();
       setError("invalid pickup location");
       return;
     }
 
     if (!validateReturnLocation) {
+      event.preventDefault();
       setError("invalid return location");
       return;
     }
 
     if (!validatePickupDate) {
+      event.preventDefault();
       setError("invalid pickup date");
       return;
     }
 
     if (!validateReturnDate) {
+      event.preventDefault();
       setError("invalid return date");
       return;
     }
@@ -209,6 +241,7 @@ function InfoForm() {
       returnDateValue!
     );
     if (!validatePickupReturn) {
+      event.preventDefault();
       setError("Dates are not valid");
       return;
     }
@@ -224,6 +257,7 @@ function InfoForm() {
         element.city === pickupCity && element.address === pickupAddress
     );
     if (pickupLocationExists === -1) {
+      event.preventDefault();
       setError("invalid pickup location");
       return;
     }
@@ -233,16 +267,19 @@ function InfoForm() {
         element.city === returnCity && element.address === returnAddress
     );
     if (returnLocationExists === -1) {
+      event.preventDefault();
       setError("invalid return location");
       return;
     }
 
     if (pickupLocations[pickupLocationExists].country !== countryValue) {
+      event.preventDefault();
       setError("invalid pickup location");
       return;
     }
 
     if (returnLocations[returnLocationExists].country !== countryValue) {
+      event.preventDefault();
       setError("invalid return location");
       return;
     }
@@ -259,10 +296,10 @@ function InfoForm() {
             {error}
           </h3>
         ) : null}
-        <form className={classes.card} onSubmit={submitHandler}>
+        <Form method="GET" className={classes.card} onSubmit={submitHandler}>
           <div className={classes["input-group"]}>
             <label htmlFor="countries">Pick country</label>
-            <select name="country" id="countries" ref={countryRef}>
+            <select name="country" id="countries" ref={countryRef} onChange={countryChangeHandler}>
               {countries
                 ? countries.map((element) => (
                     <option key={element.country} value={element.country}>
@@ -345,10 +382,10 @@ function InfoForm() {
           <button type="submit" className={classes.action}>
             Show cars
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   );
-}
+};
 
 export default InfoForm;

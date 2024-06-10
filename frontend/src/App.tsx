@@ -3,7 +3,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootPage from "./routes/RootPage";
 import ErrorPage from "./routes/ErrorPage";
-import HomePage from "./routes/HomePage";
+import HomePage, { loader as homePageLoader } from "./routes/HomePage";
 import ContactUsPage from "./routes/ContactUsPage";
 import AboutUsPage from "./routes/AboutUsPage";
 import RegisterPage from "./routes/RegisterPage";
@@ -84,6 +84,7 @@ const router = createBrowserRouter([
       {
         element: <HomePage />,
         index: true,
+        loader: homePageLoader,
       },
 
       {
