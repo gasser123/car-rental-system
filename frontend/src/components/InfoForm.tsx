@@ -296,7 +296,7 @@ const InfoForm: React.FC<Props> = (props) => {
             {error}
           </h3>
         ) : null}
-        <Form method="GET" className={classes.card} onSubmit={submitHandler}>
+        <Form method="GET" className={classes.card} onSubmit={submitHandler} action="/cars?availableOnly=true">
           <div className={classes["input-group"]}>
             <label htmlFor="countries">Pick country</label>
             <select name="country" id="countries" ref={countryRef} onChange={countryChangeHandler}>

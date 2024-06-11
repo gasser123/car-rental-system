@@ -1,0 +1,8 @@
+.cars-container {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  width: 80%;
+  margin: 1rem 0;
+  align-self: center;
+}
