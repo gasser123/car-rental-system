@@ -9,7 +9,8 @@ import {
   removePickupLocation,
   checkLocationAlreadyExists,
   checkEditLocationAlreadyExists,
-  getPickupLocation
+  getPickupLocation,
+  showLocationID
 } from "../controllers/pickupLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
@@ -23,6 +24,7 @@ const pickupLocationRoutes = (app: Application) => {
     verifyAdminToken,
     advancedSearchPickup
   );
+  app.get("/pickuplocation-id", showLocationID);
   app.post(
     "/pickuplocations",
     verifyAdminToken,

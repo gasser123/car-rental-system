@@ -30,7 +30,7 @@ const carRoutes = (app: Application) => {
     editCar
   );
   app.get("/cars", verifyAdminToken, showAllCars);
-  app.get("/cars/:id", verifyAdminToken, showCar);
+  app.get("/cars/:id", showCar);
 };
 
 export default carRoutes;

@@ -10,6 +10,7 @@ import {
   checkLocationAlreadyExists,
   checkEditLocationAlreadyExists,
   getReturnLocation,
+  showLocationID
 } from "../controllers/returnLocationController";
 import { verifyAdminToken } from "../middlewares/jwtValidation";
 import { validateLocationInputs } from "../middlewares/inputValidation";
@@ -23,6 +24,7 @@ const returnLocationRoutes = (app: Application) => {
     verifyAdminToken,
     advancedSearchReturn
   );
+  app.get("/returnlocation-id", showLocationID);
   app.post(
     "/returnlocations",
     verifyAdminToken,

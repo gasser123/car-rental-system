@@ -2,9 +2,9 @@
   padding: 0.5rem;
   background-color: #353538;
   border: 1px solid #353538;
-  width: 30%; /* Flex-grow: 1, Flex-shrink: 0, Flex-basis: 30% */
-  margin: 5px; /* Optional: Adds space between items */
-  box-sizing: border-box; /* Ensures padding and border are included in the width */
+  width: 30%;
+  margin: 5px;
+  box-sizing: border-box;
   border-radius: 8px;
   flex-wrap: wrap;
   align-items: stretch;
@@ -35,6 +35,8 @@
 }
 .info h3 {
   color: #17328f;
+  padding: 0;
+  margin: 0;
 }
 
 .available {

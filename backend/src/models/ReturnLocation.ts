@@ -121,13 +121,18 @@ class ReturnLocationStore {
       throw new Error(`couldn't get do an advanced search on pickup locations`);
     }
   }
-  async locationAlreadyExists(location: ReturnLocation):Promise<boolean>{
+  async locationAlreadyExists(location: ReturnLocation): Promise<boolean> {
     try {
-      const sql = "SELECT * FROM return_location WHERE city = ? AND address = ? AND country = ?";
-      const [rows] = await DB.execute(sql, [location.city, location.address, location.country]);
+      const sql =
+        "SELECT * FROM return_location WHERE city = ? AND address = ? AND country = ?";
+      const [rows] = await DB.execute(sql, [
+        location.city,
+        location.address,
+        location.country,
+      ]);
       const result = rows as ReturnLocation[];
-      if(result.length === 0){
-        return false; 
+      if (result.length === 0) {
+        return false;
       }
       return true;
     } catch (error) {
@@ -173,6 +178,30 @@ class ReturnLocationStore {
     } catch (error) {
       console.error(error);
       throw new Error("couldn't fetch location country");
+    }
+  }
+
+  async getLocationID(location: ReturnLocation): Promise<number | null> {
+    try {
+      const sql =
+        "SELECT * FROM return_location WHERE country = ? AND city = ? AND address = ?";
+      const [rows] = await DB.execute(sql, [
+        location.country,
+        location.city,
+        location.address,
+      ]);
+      const result = rows as ReturnLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      const id = result[0].id;
+      if (!id) {
+        return null;
+      }
+      return id;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't fetch location id");
     }
   }
 }

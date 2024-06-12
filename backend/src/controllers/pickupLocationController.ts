@@ -254,6 +254,45 @@ export async function checkEditLocationAlreadyExists(
   }
 }
 
+export async function showLocationID(req: Request, res: Response) {
+  try {
+    const country = req.query.country;
+    const city = req.query.city;
+    const address = req.query.address;
+    if (!country) {
+      throw new CustomError("country is missing", 422);
+    }
+    if (!city) {
+      throw new CustomError("city is missing", 422);
+    }
+    if (!address) {
+      throw new CustomError("address is missing", 422);
+    }
+    const location: PickupLocation = {
+      country: country as string,
+      city: city as string,
+      address: address as string,
+    };
+    const id = await store.getLocationID(location);
+    if (!id) {
+      throw new CustomError("resource not found", 404);
+    }
+    location.id = id;
+    res.json(location);
+  } catch (error) {
+    let message = "";
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
+      message = error.message;
+    }
+
+    res.json(message);
+  }
+}
+
 export async function passPickupLocationCountry(
   req: RequestObject,
   res: Response,

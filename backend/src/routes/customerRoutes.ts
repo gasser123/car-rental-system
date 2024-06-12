@@ -28,6 +28,7 @@ import {
   editEmail,
   unVerifyAccount
 } from "../controllers/customerController";
+import { isCustomerVerifiedCheck } from "../middlewares/userVerified";
 const customerRoutes = (app: express.Application) => {
   app.post(
     "/register",
@@ -66,6 +67,7 @@ const customerRoutes = (app: express.Application) => {
   app.get("/history", verifyAuthToken, showCustomerReservations);
   app.get("/customers", verifyAdminToken, showCustomers);
   app.get("/logged", verifyCustomerLoggedIn);
+  app.get("/verified", verifyAuthToken, isCustomerVerifiedCheck);
 };
 
 export default customerRoutes;

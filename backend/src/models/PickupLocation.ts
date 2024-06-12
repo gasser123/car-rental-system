@@ -167,7 +167,7 @@ class PickupLocationStore {
   async getLocationCountry(id: number): Promise<string> {
     try {
       const sql = "SELECT * FROM pickup_location WHERE id = ?";
-      const [rows] = await DB.execute(sql, id);
+      const [rows] = await DB.execute(sql, [id]);
       const result = rows as PickupLocation[];
       if (result.length === 0) {
         throw new Error("pickup location not found");
@@ -177,6 +177,31 @@ class PickupLocationStore {
     } catch (error) {
       console.error(error);
       throw new Error("couldn't fetch location country");
+    }
+  }
+
+  async getLocationID(location: PickupLocation): Promise<number | null> {
+    try {
+      const sql =
+        "SELECT * FROM pickup_location WHERE country = ? AND city = ? AND address = ?";
+
+      const [rows] = await DB.execute(sql, [
+        location.country,
+        location.city,
+        location.address,
+      ]);
+      const result = rows as PickupLocation[];
+      if (result.length === 0) {
+        return null;
+      }
+      const id = result[0].id;
+      if (!id) {
+        return null;
+      }
+      return id;
+    } catch (error) {
+      console.error(error);
+      throw new Error("couldn't fetch location id");
     }
   }
 }

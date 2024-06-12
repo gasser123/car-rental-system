@@ -77,6 +77,9 @@ import DeleteAdminPage, {
   action as deleteAdminAction,
 } from "./routes/DeleteAdminPage";
 import CarsPage, { loader as carsLoader } from "./routes/CarsPage";
+import ReservationPage, {
+  loader as reservationInfoLoader,
+} from "./routes/ReservationPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -290,6 +293,11 @@ const router = createBrowserRouter([
         path: "/cars",
         element: <CarsPage />,
         loader: carsLoader,
+      },
+      {
+        path: "/reservation",
+        element: <ReservationPage />,
+        loader: reservationInfoLoader,
       },
     ],
     errorElement: <ErrorPage />,
