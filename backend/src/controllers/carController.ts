@@ -295,8 +295,8 @@ export async function passCarCountry(
   next: NextFunction
 ) {
   try {
-    const value = req.query.car_id as string;
-    const car_id = parseInt(value);
+    const value = req.body.car_id;
+    const car_id = value as number;
     const country = await store.getCarCountry(car_id);
     req.car_country = country;
     next();

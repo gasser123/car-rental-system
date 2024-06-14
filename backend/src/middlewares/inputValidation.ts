@@ -540,33 +540,33 @@ export function validateReservationInputs(
   next: NextFunction
 ) {
   try {
-    const value = req.query.car_id;
+    const value = req.body.car_id;
     if (!value) {
       throw new CustomError("car id is missing", 422);
     }
-    const value1 = req.query.pickup_location_id;
+    const value1 = req.body.pickup_location_id;
     if (!value1) {
       throw new CustomError("pickup location id is missing", 422);
     }
 
-    const value2 = req.query.return_location_id;
+    const value2 = req.body.return_location_id;
     if (!value2) {
       throw new CustomError("return location id is missing", 422);
     }
-    const value3 = req.query.pickup_date;
+    const value3 = req.body.pickup_date;
     if (!value3) {
       throw new CustomError("pickup date is missing", 422);
     }
 
-    const value4 = req.query.return_date;
+    const value4 = req.body.return_date;
     if (!value4) {
       throw new CustomError("return date is missing", 422);
     }
-    const car_id = parseInt(value as string);
-    const pickup_date = req.query.pickup_date;
-    const return_date = req.query.return_date;
-    const pickup_location_id = parseInt(req.query.pickup_location_id as string);
-    const return_location_id = parseInt(req.query.return_location_id as string);
+    const car_id = value;
+    const pickup_date = req.body.pickup_date;
+    const return_date = req.body.return_date;
+    const pickup_location_id = req.body.pickup_location_id;
+    const return_location_id = req.body.return_location_id;
 
     const validateCarId = reservationValidator.validateId(car_id);
     const validatePickupLocation =

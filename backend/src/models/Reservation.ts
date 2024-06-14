@@ -11,9 +11,10 @@ class ReservationStore {
         pickup_date,
         return_date,
         total_amount,
+        reservation_date,
       } = reservation;
       const sql =
-        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, pickup_date, return_date, total_amount) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, pickup_date, return_date, total_amount, reservation_date) VALUES(?, ?, ?, ?, ?, ?, ?)";
       await DB.execute(sql, [
         customer_id,
         car_id,
@@ -22,6 +23,7 @@ class ReservationStore {
         pickup_date,
         return_date,
         total_amount,
+        reservation_date,
       ]);
       const sql2 =
         "SELECT * FROM reservation WHERE car_id = ? AND pickup_date = ? AND return_date = ?";

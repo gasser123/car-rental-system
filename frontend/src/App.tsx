@@ -80,6 +80,10 @@ import CarsPage, { loader as carsLoader } from "./routes/CarsPage";
 import ReservationPage, {
   loader as reservationInfoLoader,
 } from "./routes/ReservationPage";
+import ReservationSuccessPage from "./routes/ReservationSuccessPage";
+import CustomerBookingsPage, {
+  loader as customerBookingsLoader,
+} from "./routes/CustomerBookingsPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -298,6 +302,15 @@ const router = createBrowserRouter([
         path: "/reservation",
         element: <ReservationPage />,
         loader: reservationInfoLoader,
+      },
+      {
+        path: "/success",
+        element: <ReservationSuccessPage />,
+      },
+      {
+        path: "/bookings",
+        element: <CustomerBookingsPage />,
+        loader: customerBookingsLoader,
       },
     ],
     errorElement: <ErrorPage />,

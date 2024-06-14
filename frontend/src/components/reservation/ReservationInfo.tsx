@@ -4,29 +4,45 @@ import { useSearchParams } from "react-router-dom";
 import { daysBetweenDates } from "../../utilities/calculations";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../utilities/formatDate";
+import { useState } from "react";
+import Modal from "../UI/Modal";
+import StripePayment from "../payment/StripePayment";
 interface Props {
   reservationLoaderData: ReservationLoaderResponse;
 }
 
 const ReservationInfo: React.FC<Props> = (props) => {
   const { pickupLocation, returnLocation, car } = props.reservationLoaderData;
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const pickupDate = searchParams.get("pickupDate");
   const returnDate = searchParams.get("returnDate");
-  let totalAmount: number | null = null;
+  let totalAmount: number = 0;
   if (pickupDate && returnDate) {
     const daysDifference = daysBetweenDates(pickupDate, returnDate);
     totalAmount = car.price_per_day * daysDifference;
   }
 
   const pickupDateObject = new Date(pickupDate as string);
-  const returnDateObject = new Date(returnDate as string); 
+  const returnDateObject = new Date(returnDate as string);
   const pickupDateValue = formatDate(pickupDateObject);
   const returnDateValue = formatDate(returnDateObject);
 
   const cancelClickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
     navigate(-1);
+  };
+
+  const confirmClickHandler: React.MouseEventHandler<
+    HTMLButtonElement
+  > = () => {
+    setShowPaymentModal(true);
+  };
+  const onHideModal: React.MouseEventHandler<HTMLDivElement> = () => {
+    setShowPaymentModal(false);
+  };
+  const onHideModalFunc = () => {
+    setShowPaymentModal(false);
   };
   return (
     <div className={classes.container}>
@@ -74,13 +90,26 @@ const ReservationInfo: React.FC<Props> = (props) => {
 
       <h3>{`Total Amount: $${totalAmount}`}</h3>
       <div className={classes.actions}>
-        <button type="button" className={classes.cancel} onClick={cancelClickHandler}>
+        <button
+          type="button"
+          className={classes.cancel}
+          onClick={cancelClickHandler}
+        >
           Cancel
         </button>
-        <button type="button" className={classes.confirm}>
+        <button
+          type="button"
+          className={classes.confirm}
+          onClick={confirmClickHandler}
+        >
           Confirm
         </button>
       </div>
+      {showPaymentModal ? (
+        <Modal onHideModal={onHideModal}>
+          <StripePayment onHideModal={onHideModalFunc} totalAmount={totalAmount}/>
+        </Modal>
+      ) : null}
     </div>
   );
 };

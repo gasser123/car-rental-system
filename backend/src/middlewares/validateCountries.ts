@@ -1,5 +1,6 @@
 import { Response, NextFunction } from "express";
 import RequestObject from "../entities/requestObject";
+import CustomError from "../utilities/CustomError";
 async function validateCountries(
   req: RequestObject,
   res: Response,
@@ -20,14 +21,21 @@ async function validateCountries(
     if (car_country === pickup_country && car_country === return_country) {
       next();
     } else {
-      throw new Error("car country and location countries are not the same");
+      throw new CustomError(
+        "car country and location countries are not the same",
+        422
+      );
     }
   } catch (error) {
     let message = "";
-    if (error instanceof Error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
       res.status(500);
       message = error.message;
     }
+
     res.json(message);
   }
 }

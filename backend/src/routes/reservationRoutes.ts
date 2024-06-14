@@ -11,6 +11,7 @@ import {
   showUnconfirmedReservations,
   showAllAdminReservationsInfo,
   showAdminUnconfirmedReservationsInfo,
+  showCustomerReservations
 } from "../controllers/reservationController";
 import isCustomerVerifiedAuth from "../middlewares/userVerified";
 import { validateReservationInputs } from "../middlewares/inputValidation";
@@ -27,10 +28,15 @@ const reservationRoutes = (app: Application) => {
     passPickupLocationCountry,
     passReturnLocationCountry,
     validateCountries,
+    //TODO: add a middleware to calculate total amount
+    // and pass it in request
+    //TODO: put makeAreservation and Rent Car in a separate endpoint (stripe web hook to get metadata from payment intent)
+    // and replace them with the payment Intent instead
     makeAReservation,
     RentCar
   );
   app.get("/reservations", verifyAdminToken, showAllReservations);
+  app.get("/customer-reservations", verifyAuthToken, showCustomerReservations);
   app.get(
     "/reservations/unconfirmed",
     verifyAdminToken,

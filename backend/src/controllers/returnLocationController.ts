@@ -261,8 +261,8 @@ export async function passReturnLocationCountry(
   next: NextFunction
 ) {
   try {
-    const value = req.query.return_location_id as string;
-    const return_location_id = parseInt(value);
+    const value = req.body.return_location_id;
+    const return_location_id = value;
     const country = await store.getLocationCountry(return_location_id);
     req.return_country = country;
     next();

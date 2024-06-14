@@ -299,8 +299,8 @@ export async function passPickupLocationCountry(
   next: NextFunction
 ) {
   try {
-    const value = req.query.pickup_location_id as string;
-    const pickup_location_id = parseInt(value);
+    const value = req.body.pickup_location_id;
+    const pickup_location_id = value;
     const country = await store.getLocationCountry(pickup_location_id);
     req.pickup_country = country;
     next();
