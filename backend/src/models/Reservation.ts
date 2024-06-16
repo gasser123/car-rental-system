@@ -14,7 +14,7 @@ class ReservationStore {
         reservation_date,
       } = reservation;
       const sql =
-        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, pickup_date, return_date, total_amount, reservation_date) VALUES(?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO reservation(customer_id, car_id, pickup_location_id, return_location_id, pickup_date, return_date, total_amount, reservation_date) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
       await DB.execute(sql, [
         customer_id,
         car_id,

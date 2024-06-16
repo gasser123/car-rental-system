@@ -11,6 +11,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: fit-content;
 }
 
 @media screen and (max-width: 899px) {
@@ -33,6 +34,8 @@ code {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: fit-content;
+  min-height: fit-content;
 }
 main {
   display: flex;

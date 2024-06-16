@@ -7,6 +7,7 @@ import { formatDate } from "../../utilities/formatDate";
 import { useState } from "react";
 import Modal from "../UI/Modal";
 import StripePayment from "../payment/StripePayment";
+import ReservationOrderInfo from "../../entities/ReservationOrderInfo";
 interface Props {
   reservationLoaderData: ReservationLoaderResponse;
 }
@@ -29,6 +30,14 @@ const ReservationInfo: React.FC<Props> = (props) => {
   const pickupDateValue = formatDate(pickupDateObject);
   const returnDateValue = formatDate(returnDateObject);
 
+  const reservationOrderInfo: ReservationOrderInfo = {
+    car_id: car.id!,
+    pickup_date: pickupDate!,
+    return_date: returnDate!,
+    pickup_location_id: pickupLocation.id!,
+    return_location_id: returnLocation.id!,
+    total_amount: totalAmount,
+  };
   const cancelClickHandler: React.MouseEventHandler<HTMLButtonElement> = () => {
     navigate(-1);
   };
@@ -107,7 +116,10 @@ const ReservationInfo: React.FC<Props> = (props) => {
       </div>
       {showPaymentModal ? (
         <Modal onHideModal={onHideModal}>
-          <StripePayment onHideModal={onHideModalFunc} totalAmount={totalAmount}/>
+          <StripePayment
+            onHideModal={onHideModalFunc}
+            reservationOrderInfo={reservationOrderInfo}
+          />
         </Modal>
       ) : null}
     </div>

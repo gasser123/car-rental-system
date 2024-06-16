@@ -18,9 +18,11 @@ import { validateReservationInputs } from "../middlewares/inputValidation";
 import { passPickupLocationCountry } from "../controllers/pickupLocationController";
 import { passReturnLocationCountry } from "../controllers/returnLocationController";
 import validateCountries from "../middlewares/validateCountries";
+import calculateTotalAmount from "../middlewares/calculateTotalAmount";
+import { createPaymentIntent } from "../services/stripeServices";
 const reservationRoutes = (app: Application) => {
   app.post(
-    "/reservations",
+    "/create-payment-intent",
     verifyAuthToken,
     isCustomerVerifiedAuth,
     validateReservationInputs,
@@ -28,10 +30,8 @@ const reservationRoutes = (app: Application) => {
     passPickupLocationCountry,
     passReturnLocationCountry,
     validateCountries,
-    //TODO: add a middleware to calculate total amount
-    // and pass it in request
-    //TODO: put makeAreservation and Rent Car in a separate endpoint (stripe web hook to get metadata from payment intent)
-    // and replace them with the payment Intent instead
+    calculateTotalAmount,
+    createPaymentIntent,
     makeAReservation,
     RentCar
   );
@@ -48,7 +48,7 @@ const reservationRoutes = (app: Application) => {
     verifyAdminToken,
     showAdminUnconfirmedReservationsInfo
   );
-  app.patch("/reservations/confirm/:id", verifyAdminToken, confirmReservation);
+  app.patch("/reservations/:id/confirm", verifyAdminToken, confirmReservation);
 };
 
 export default reservationRoutes;

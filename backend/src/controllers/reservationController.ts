@@ -15,7 +15,7 @@ import { convertJSDateToMysqlDateTime } from "../utilities/utilityFunctions";
 const store = new ReservationStore();
 export async function makeAReservation(
   req: RequestObject,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) {
   try {
@@ -47,14 +47,12 @@ export async function makeAReservation(
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {
-      res.status(error.status);
       message = error.message;
     } else if (error instanceof Error) {
-      res.status(500);
       message = error.message;
     }
 
-    res.json(message);
+    console.error(message);
   }
 }
 
@@ -165,6 +163,8 @@ export async function confirmReservation(req: RequestObject, res: Response) {
     }
     const id = parseInt(value);
     await store.updateConfirmReservation(id);
+    res.status(200);
+    res.json("reservation confirmed successfully");
   } catch (error) {
     let message = "";
     if (error instanceof CustomError) {

@@ -1,10 +1,6 @@
 import CustomerReservation from "../../entities/customerReservation";
 import classes from "./CustomerBooking.module.css";
-import {
-  convertMysqlDateTimeToIsoString,
-  convertUTCtoLocalTime,
-  convertJSDateToMysqlDateTime,
-} from "../../utilities/formatDate";
+import { formatDate } from "../../utilities/formatDate";
 interface Props {
   customerReservationsInfo: CustomerReservation[];
   children?: React.ReactNode;
@@ -12,23 +8,15 @@ interface Props {
 
 const CustomerBooking: React.FC<Props> = (props) => {
   const { customerReservationsInfo } = props;
-  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return (
     <>
       {customerReservationsInfo.map((element) => (
         <tr key={element.reservation_id}>
           <td>{element.reservation_id}</td>
-          <td>
-            {convertJSDateToMysqlDateTime(
-              convertUTCtoLocalTime(
-                convertMysqlDateTimeToIsoString(element.reservation_date),
-                userTimeZone
-              )
-            )}
-          </td>
-          <td>{element.pickup_date}</td>
-          <td>{element.return_date}</td>
-          <td>{element.total_amount}</td>
+          <td>{formatDate(new Date(element.reservation_date))}</td>
+          <td>{formatDate(new Date(element.pickup_date))}</td>
+          <td>{formatDate(new Date(element.return_date))}</td>
+          <td>{"$" + element.total_amount}</td>
           <td>{element.plate_id}</td>
           <td>{element.model}</td>
           <td>{element.year}</td>

@@ -605,10 +605,14 @@ export function validateReservationInputs(
     next();
   } catch (error) {
     let message = "";
-    if (error instanceof Error) {
+    if (error instanceof CustomError) {
+      res.status(error.status);
+      message = error.message;
+    } else if (error instanceof Error) {
+      res.status(500);
       message = error.message;
     }
-    res.status(422);
+
     res.json(message);
   }
 }

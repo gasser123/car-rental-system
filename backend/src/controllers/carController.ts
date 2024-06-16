@@ -270,22 +270,19 @@ export async function checkIfAvailable(
   }
 }
 
-export async function RentCar(req: RequestObject, res: Response) {
+export async function RentCar(req: RequestObject) {
   try {
-    const id = req.car_id;
+    const id = req.body.car_id;
     if (!id) {
       throw new Error("car id not specified for reservation");
     }
     await store.updateToRented(id);
-    res.status(200);
-    res.json("Car rented successfully");
   } catch (error) {
     let message = "";
     if (error instanceof Error) {
       message = error.message;
     }
-    res.status(500);
-    res.json(message);
+    console.error(message);
   }
 }
 
@@ -299,6 +296,7 @@ export async function passCarCountry(
     const car_id = value as number;
     const country = await store.getCarCountry(car_id);
     req.car_country = country;
+    req.car_id = value;
     next();
   } catch (error) {
     let message = "";

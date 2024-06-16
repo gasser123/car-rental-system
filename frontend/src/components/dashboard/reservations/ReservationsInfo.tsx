@@ -6,10 +6,11 @@ import { Form } from "react-router-dom";
 import SearchBar from "../../UI/SearchBar";
 interface Props {
   adminReservationsInfo: AdminReservationInfo[] | null;
+  confirm?: boolean;
   children?: React.ReactNode;
 }
 const ReservationsInfo: React.FC<Props> = (props) => {
-  const { adminReservationsInfo } = props;
+  const { adminReservationsInfo, confirm } = props;
   return adminReservationsInfo ? (
     <div className={classes["dashboard-main"]}>
       <Form method="GET">
@@ -30,11 +31,11 @@ const ReservationsInfo: React.FC<Props> = (props) => {
           <th>pickup date</th>
           <th>return date</th>
           <th>total amount</th>
-          <th>confirmed</th>
+          {!confirm ? <th>confirmed</th> : <th>confirm</th>}
         </tr>
       </thead>
       <tbody>
-        <ReservationInfo adminReservationsInfo={adminReservationsInfo} />
+        <ReservationInfo adminReservationsInfo={adminReservationsInfo} confirm={confirm} />
       </tbody>
     </Table>
     </div>

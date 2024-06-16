@@ -7,11 +7,14 @@ import {
 import classes from "./CheckoutForm.module.css";
 import Spinner from "../UI/Spinner";
 import circleXmark from "../../assets/circle-xmark-solid.svg";
+import ReservationOrderInfo from "../../entities/ReservationOrderInfo";
 interface Props {
   onHideModal: () => void;
+  reservationOrderInfo: ReservationOrderInfo;
 }
 // Define the CheckoutForm component
 const CheckoutForm: React.FC<Props> = (props) => {
+  const { reservationOrderInfo } = props;
   const stripe = useStripe(); // Hook to get the Stripe instance
   const elements = useElements(); // Hook to get the Elements instance
   const [error, setError] = useState<string | null | undefined>(null); // State to store any error messages
@@ -22,6 +25,7 @@ const CheckoutForm: React.FC<Props> = (props) => {
   ) => {
     event.preventDefault(); // Prevent the default form submission behavior
     setIsLoading(true);
+    setError(null);
     if (!stripe || !elements) {
       setError("Error retrieving data try again");
       setIsLoading(false);
@@ -37,33 +41,47 @@ const CheckoutForm: React.FC<Props> = (props) => {
     }
 
     // Create the PaymentIntent and obtain clientSecret
-    //TODO
-    const res = await fetch("/create-intent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const res = await fetch("http://localhost:8080/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(reservationOrderInfo),
+      });
 
-    const { client_secret: clientSecret } = await res.json();
-    const hostName = window.location.hostname;
-    const port = window.location.port ? `:${window.location.port}` : '';
-    const protocol =  window.location.protocol;
-    // Use the clientSecret and Elements instance to confirm the setup
-    const { error } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `${protocol}//${hostName}${port}/success`,
-      },
-      // Uncomment below if you only want redirect for redirect-based payments
-      // redirect: "if_required",
-    });
+     if(!res.ok){
+      const errorMessage = await res.json();
+      throw new Error(errorMessage);
+     }
 
-    if (error) {
-      setError(error.message); // Set the error state if an error occurs
+      const { clientSecret } = await res.json();
+      const hostName = window.location.hostname;
+      const port = window.location.port ? `:${window.location.port}` : "";
+      const protocol = window.location.protocol;
+      // Use the clientSecret and Elements instance to confirm the setup
+      const { error } = await stripe.confirmPayment({
+        elements,
+        clientSecret,
+        confirmParams: {
+          return_url: `${protocol}//${hostName}${port}/success`,
+        },
+        // Uncomment below if you only want redirect for redirect-based payments
+        // redirect: "if_required",
+      });
+
+      if (error) {
+        setError(error.message); // Set the error state if an error occurs
+        setIsLoading(false);
+      }
+
       setIsLoading(false);
+      props.onHideModal();
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
     }
-    setIsLoading(false);
-    props.onHideModal();
   };
 
   return (

@@ -168,7 +168,7 @@ class ReturnLocationStore {
   async getLocationCountry(id: number): Promise<string> {
     try {
       const sql = "SELECT * FROM return_location WHERE id = ?";
-      const [rows] = await DB.execute(sql, id);
+      const [rows] = await DB.execute(sql, [id]);
       const result = rows as ReturnLocation[];
       if (result.length === 0) {
         throw new Error("return location not found");

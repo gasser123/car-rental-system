@@ -84,6 +84,10 @@ import ReservationSuccessPage from "./routes/ReservationSuccessPage";
 import CustomerBookingsPage, {
   loader as customerBookingsLoader,
 } from "./routes/CustomerBookingsPage";
+import ConfirmReservationPage, {
+  loader as confirmReservationLoader,
+  action as confirmReservationAction,
+} from "./routes/ConfirmReservationPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -199,8 +203,20 @@ const router = createBrowserRouter([
           },
           {
             path: "unconfirmed",
-            element: <UnconfirmedReservationsPage />,
-            loader: UnconfirmedReservationsLoader,
+
+            children: [
+              {
+                index: true,
+                element: <UnconfirmedReservationsPage />,
+                loader: UnconfirmedReservationsLoader,
+              },
+              {
+                path: ":id/confirm",
+                element: <ConfirmReservationPage />,
+                loader: confirmReservationLoader,
+                action: confirmReservationAction,
+              },
+            ],
           },
           {
             path: "reservations",
