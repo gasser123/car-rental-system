@@ -5,6 +5,7 @@ Welcome to the Car Rental System! This repository contains a full-stack web appl
 ## Features
 
 ### Client Side
+
 - **Sign Up / Login:** Clients can create an account and log in to the system.
 - **Country Selection:** Choose the country where they want to rent a car.
 - **Location and Dates:** Specify pickup and return locations and dates.
@@ -13,6 +14,7 @@ Welcome to the Car Rental System! This repository contains a full-stack web appl
 - **Booking History:** View past and upcoming bookings.
 
 ### Admin Side
+
 - **Admin Login:** Access the admin portal at `/admin`.
 - **Manage Cars:** Add, view, and manage the fleet of cars.
 - **Manage Locations:** Add, view, and manage pickup and return locations.
@@ -22,11 +24,13 @@ Welcome to the Car Rental System! This repository contains a full-stack web appl
 ## Technologies Used
 
 ### Frontend
+
 - **Create React App (TypeScript):** A simple and robust way to create React applications.
 - **React & React Router:** For building and managing the user interface.
 - **Stripe.js & react-stripe:** For handling payments.
 
 ### Backend
+
 - **Node.js & Express:** For creating the server and APIs.
 - **TypeScript:** For type-safe JavaScript.
 - **MySQL:** Database management using mysql2 package.
@@ -39,39 +43,65 @@ Welcome to the Car Rental System! This repository contains a full-stack web appl
 ## Installation and Setup
 
 ### Frontend
+
 1. Navigate to the `frontend` folder:
-    ```bash
-    cd frontend
-    ```
+   ```bash
+   cd frontend
+   ```
 2. Install the required packages:
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 3. Start the React app:
-    ```bash
-    npm start
-    ```
+   ```bash
+   npm start
+   ```
 
 ### Backend
+
 1. Navigate to the `backend` folder:
-    ```bash
-    cd backend
-    ```
+   ```bash
+   cd backend
+   ```
 2. Install the required packages:
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 3. Run database migrations:
-    ```bash
-    db-migrate up
-    ```
+   ```bash
+   db-migrate up
+   ```
 4. Start the server:
-    ```bash
-    npm start
-    ```
+   ```bash
+   npm start
+   ```
+
+## Environment Variables
+
+Set the following environment variables in your `.env` file or environment configuration:
+
+- `MYSQL_HOST`: The host for MySQL database
+- `MYSQL_DB`: MySQL database name
+- `MYSQL_USER`: Database user
+- `MYSQL_PASSWORD`: Password for database
+- `MYSQL_TEST_DB`: Testing database
+- `ENV`: Environment (e.g., dev or prod)
+- `BCRYPT_PASSWORD`: Password added for hashing
+- `SALT_ROUNDS`: Salt rounds for hashing
+- `TOKEN_SECRET`: Secret for JWT for user
+- `ADMIN_TOKEN_SECRET`: Secret for JWT for admin
+- `REACT_PORT`: Port for the React application
+- `EMAIL_AUTH_USERNAME`: Could be anything since we use Mailpit
+- `EMAIL_AUTH_PASSWORD`: Could be anything since we use Mailpit
+- `EMAIL_HOST`: Host for email
+- `EMAIL_PORT`: Port for email
+- `SENDER_EMAIL`: The email for sender
+- `STRIPE_SECRET`: Secret for Stripe
 
 ## Admin Credentials
+
 A root admin is created automatically with the following credentials:
+
 - **Email:** gasser@gmail.com
 - **Password:** Gasser123
 
@@ -80,6 +110,7 @@ The root admin has the ability to add and remove other admins.
 ## Usage
 
 ### Client Usage
+
 1. **Sign Up / Login:** Clients create an account or log in.
 2. **Select Country & Locations:** Choose the desired country, pickup, and return locations.
 3. **Choose Dates:** Specify the pickup and return dates.
@@ -88,6 +119,7 @@ The root admin has the ability to add and remove other admins.
 6. **Booking History:** View all bookings in the bookings page.
 
 ### Admin Usage
+
 1. **Admin Login:** Log in at `/admin`.
 2. **Manage Cars & Locations:** Add, view, and manage cars and locations.
 3. **Reservations:** View and confirm reservations.
